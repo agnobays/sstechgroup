@@ -219,6 +219,14 @@ export function initDatabase() {
       INSERT INTO packages (key, name, starting_price, description, features_json, ideal_for, sort_order)
       VALUES (?, ?, ?, ?, ?, ?, ?)
     `);
+        insertPackage.run('landing_page', 'Landing Page / Launchpad', 2500, 'A high-impact, single-page responsive website designed for rapid launches, startup profiles, and immediate lead generation.', JSON.stringify([
+            '1 high-impact responsive single-page layout (Hero, About, Services, Call to Action)',
+            'Direct WhatsApp click-to-chat & lead capture contact form',
+            'Mobile-first responsive UX and fast asset loading',
+            'Basic Google Search Console indexing & local SEO meta tags',
+            'Social media preview card (Open Graph / WhatsApp preview) & SSL encryption',
+            'Standard 7-day post-launch warranty & setup support',
+        ]), 'Startups, sole proprietors, promotions, single products, and micro-enterprises', 1);
         insertPackage.run('starter', 'Starter Website', 7500, 'A streamlined, professional 1-3 page web presence engineered for emerging businesses and sole proprietors.', JSON.stringify([
             'Up to 3 responsive custom-designed pages (Home, About/Services, Contact)',
             'Mobile-friendly responsive layout and accessible navigation',
@@ -226,7 +234,7 @@ export function initDatabase() {
             'Basic SEO metadata and Google Search Console sitemap setup',
             'Social media and WhatsApp chat integration',
             'Standard 14-day post-launch warranty',
-        ]), 'Small businesses, consultants, sole practitioners, and local services', 1);
+        ]), 'Small businesses, consultants, sole practitioners, and local services', 2);
         insertPackage.run('business', 'Business Website', 12500, 'A comprehensive, high-credibility 4-7 page digital platform designed for established SMEs and growing companies.', JSON.stringify([
             'Up to 7 structured pages (Home, About, Multi-Service breakdown, Portfolio/Case Studies, Team, Contact)',
             'Bespoke visual design reflecting established company branding',
@@ -235,7 +243,7 @@ export function initDatabase() {
             'Full Open Graph and structured data schema implementation',
             'CMS readiness or structured editable sections',
             '30-day post-launch warranty and technical support',
-        ]), 'Growing enterprises, commercial firms, educational departments, and service providers', 2);
+        ]), 'Growing enterprises, commercial firms, educational departments, and service providers', 3);
         insertPackage.run('professional', 'Professional Website', 18500, 'An advanced, high-performance web platform for larger organisations, educational institutions, and corporate entities.', JSON.stringify([
             'Up to 12 pages with tailored section templates',
             'Structured publication, blog, or document download repositories',
@@ -244,7 +252,7 @@ export function initDatabase() {
             'Search engine optimisation with canonical hierarchies',
             'Interactive components, filterable galleries, or course directories',
             'Priority 45-day post-launch warranty and support',
-        ]), 'Institutions, multi-branch companies, colleges, and demanding corporate presences', 3);
+        ]), 'Institutions, multi-branch companies, colleges, and demanding corporate presences', 4);
         insertPackage.run('custom_app', 'Custom Web Application', 25000, 'Bespoke web applications, workflow automation tools, and internal portals designed around your business logic.', JSON.stringify([
             'Architecture consultation, database modeling, and API specifications',
             'Secure user authentication and role-based access control',
@@ -253,7 +261,28 @@ export function initDatabase() {
             'Document generation (PDF invoices, job cards, certificates)',
             'Third-party API and payment gateway integrations',
             '60-day post-launch warranty and comprehensive system handover',
-        ]), 'Businesses requiring custom SaaS, quoting systems, field operation tools, or portal automation', 4);
+        ]), 'Businesses requiring custom SaaS, quoting systems, field operation tools, or portal automation', 5);
+    }
+    else {
+        // Migration check: ensure 'landing_page' package exists for existing databases
+        const hasLandingPkg = db.prepare("SELECT id FROM packages WHERE key = 'landing_page'").get();
+        if (!hasLandingPkg) {
+            db.prepare(`
+        INSERT INTO packages (key, name, starting_price, description, features_json, ideal_for, sort_order)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+      `).run('landing_page', 'Landing Page / Launchpad', 2500, 'A high-impact, single-page responsive website designed for rapid launches, startup profiles, and immediate lead generation.', JSON.stringify([
+                '1 high-impact responsive single-page layout (Hero, About, Services, Call to Action)',
+                'Direct WhatsApp click-to-chat & lead capture contact form',
+                'Mobile-first responsive UX and fast asset loading',
+                'Basic Google Search Console indexing & local SEO meta tags',
+                'Social media preview card (Open Graph / WhatsApp preview) & SSL encryption',
+                'Standard 7-day post-launch warranty & setup support',
+            ]), 'Startups, sole proprietors, promotions, single products, and micro-enterprises', 1);
+            db.prepare("UPDATE packages SET sort_order = 2 WHERE key = 'starter'").run();
+            db.prepare("UPDATE packages SET sort_order = 3 WHERE key = 'business'").run();
+            db.prepare("UPDATE packages SET sort_order = 4 WHERE key = 'professional'").run();
+            db.prepare("UPDATE packages SET sort_order = 5 WHERE key = 'custom_app'").run();
+        }
     }
     // Seed Approved Optional Services
     const existingOptions = db.prepare('SELECT COUNT(*) as count FROM optional_services').get();

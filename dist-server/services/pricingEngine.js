@@ -4,10 +4,11 @@ export function evaluateQuestionnaireAndCalculatePrice(data) {
     // Load current verified packages and optional services from database
     const packages = db.prepare('SELECT * FROM packages WHERE is_active = 1 ORDER BY sort_order ASC').all();
     const optionalServices = db.prepare('SELECT * FROM optional_services WHERE is_active = 1').all();
-    const starterPkg = packages.find((p) => p.key === 'starter') || packages[0];
-    const businessPkg = packages.find((p) => p.key === 'business') || packages[1];
-    const proPkg = packages.find((p) => p.key === 'professional') || packages[2];
-    const customPkg = packages.find((p) => p.key === 'custom_app') || packages[3];
+    const landingPkg = packages.find((p) => p.key === 'landing_page') || packages[0];
+    const starterPkg = packages.find((p) => p.key === 'starter') || packages[1] || packages[0];
+    const businessPkg = packages.find((p) => p.key === 'business') || packages[2] || packages[0];
+    const proPkg = packages.find((p) => p.key === 'professional') || packages[3] || packages[0];
+    const customPkg = packages.find((p) => p.key === 'custom_app') || packages[4] || packages[0];
     let selectedPkg = businessPkg;
     let isCustom = false;
     let status = 'Ready for Customer';
@@ -42,6 +43,10 @@ export function evaluateQuestionnaireAndCalculatePrice(data) {
     else if (service === 'education_website' || pageCount === '8-15' || features.includes('multi_language')) {
         selectedPkg = proPkg;
         reasoningPoints.push('Recommended Professional Website package: caters to multi-department institutional structures, extended page counts (up to 12 pages), and structured document archives.');
+    }
+    else if (service === 'landing_page' || pageCount === '1' || data.budgetRange === 'under_5k') {
+        selectedPkg = landingPkg;
+        reasoningPoints.push('Recommended Landing Page / Launchpad package (from R 2,500): ideal for a high-impact single-page digital presence, startup launches, and direct WhatsApp lead capture.');
     }
     else if (pageCount === '1-3' && features.length <= 2 && service !== 'education_website') {
         selectedPkg = starterPkg;

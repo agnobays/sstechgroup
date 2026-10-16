@@ -43,12 +43,12 @@ export const GetAQuotePage: React.FC = () => {
     consentFollowup: true,
 
     // Step 2: Service & Goals
-    serviceRequired: initialPackageParam === 'custom_app' ? 'custom_app' : 'business_website',
+    serviceRequired: initialPackageParam === 'landing_page' ? 'landing_page' : initialPackageParam === 'custom_app' ? 'custom_app' : 'business_website',
     projectGoals: '',
     targetAudience: '',
     existingWebsite: '',
     hasDomain: true,
-    pageCount: initialPackageParam === 'starter' ? '1-3' : initialPackageParam === 'professional' ? '8-15' : '4-7',
+    pageCount: initialPackageParam === 'landing_page' ? '1' : initialPackageParam === 'starter' ? '1-3' : initialPackageParam === 'professional' ? '8-15' : '4-7',
 
     // Step 3: Features & Integrations (Adaptive)
     features: [] as string[],
@@ -907,6 +907,7 @@ export const GetAQuotePage: React.FC = () => {
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {[
+                    { key: 'landing_page', label: 'Landing Page / Single-Page (From R 2,500)' },
                     { key: 'business_website', label: 'Business / Corporate Website' },
                     { key: 'education_website', label: 'School / College / University Portal' },
                     { key: 'custom_app', label: 'Custom Web Application / Dashboard' },
@@ -917,7 +918,15 @@ export const GetAQuotePage: React.FC = () => {
                     <button
                       key={s.key}
                       type="button"
-                      onClick={() => setFormData({ ...formData, serviceRequired: s.key })}
+                      onClick={() => {
+                        const updated = {
+                          ...formData,
+                          serviceRequired: s.key,
+                          pageCount: s.key === 'landing_page' ? '1' : formData.pageCount === '1' ? '4-7' : formData.pageCount,
+                        };
+                        setFormData(updated);
+                        saveStepProgress(currentStep, updated);
+                      }}
                       className={`p-3.5 rounded-xl border text-left text-xs font-semibold transition-all ${
                         formData.serviceRequired === s.key
                           ? 'bg-brand-black border-brand-gold text-brand-gold shadow-sm'
@@ -940,6 +949,7 @@ export const GetAQuotePage: React.FC = () => {
                     onChange={(e) => setFormData({ ...formData, pageCount: e.target.value })}
                     className="w-full px-3.5 py-2.5 rounded-lg bg-brand-black border border-brand-border text-brand-off-white text-xs focus:outline-none focus:border-brand-gold"
                   >
+                    <option value="1">1 Page (Landing Page / Launchpad — From R 2,500)</option>
                     <option value="1-3">1 - 3 Pages (Starter tier)</option>
                     <option value="4-7">4 - 7 Pages (Business tier)</option>
                     <option value="8-15">8 - 15 Pages (Professional tier)</option>
@@ -1116,7 +1126,8 @@ export const GetAQuotePage: React.FC = () => {
                     className="w-full px-3.5 py-2.5 rounded-lg bg-brand-black border border-brand-border text-brand-off-white text-xs focus:outline-none focus:border-brand-gold"
                   >
                     <option value="undisclosed">Comfortable with standard package rates</option>
-                    <option value="under_10k">Under R 10,000</option>
+                    <option value="under_5k">Under R 5,000 (Launchpad / Landing Page Tier)</option>
+                    <option value="under_10k">R 5,000 - R 10,000 (Starter Website Tier)</option>
                     <option value="10k_20k">R 10,000 - R 20,000</option>
                     <option value="20k_40k">R 20,000 - R 40,000</option>
                     <option value="40k_plus">R 40,000+</option>

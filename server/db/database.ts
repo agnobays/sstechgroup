@@ -241,6 +241,23 @@ export function initDatabase(): void {
     `);
 
     insertPackage.run(
+      'landing_page',
+      'Landing Page / Launchpad',
+      2500,
+      'A high-impact, single-page responsive website designed for rapid launches, startup profiles, and immediate lead generation.',
+      JSON.stringify([
+        '1 high-impact responsive single-page layout (Hero, About, Services, Call to Action)',
+        'Direct WhatsApp click-to-chat & lead capture contact form',
+        'Mobile-first responsive UX and fast asset loading',
+        'Basic Google Search Console indexing & local SEO meta tags',
+        'Social media preview card (Open Graph / WhatsApp preview) & SSL encryption',
+        'Standard 7-day post-launch warranty & setup support',
+      ]),
+      'Startups, sole proprietors, promotions, single products, and micro-enterprises',
+      1
+    );
+
+    insertPackage.run(
       'starter',
       'Starter Website',
       7500,
@@ -254,7 +271,7 @@ export function initDatabase(): void {
         'Standard 14-day post-launch warranty',
       ]),
       'Small businesses, consultants, sole practitioners, and local services',
-      1
+      2
     );
 
     insertPackage.run(
@@ -272,7 +289,7 @@ export function initDatabase(): void {
         '30-day post-launch warranty and technical support',
       ]),
       'Growing enterprises, commercial firms, educational departments, and service providers',
-      2
+      3
     );
 
     insertPackage.run(
@@ -290,7 +307,7 @@ export function initDatabase(): void {
         'Priority 45-day post-launch warranty and support',
       ]),
       'Institutions, multi-branch companies, colleges, and demanding corporate presences',
-      3
+      4
     );
 
     insertPackage.run(
@@ -308,8 +325,37 @@ export function initDatabase(): void {
         '60-day post-launch warranty and comprehensive system handover',
       ]),
       'Businesses requiring custom SaaS, quoting systems, field operation tools, or portal automation',
-      4
+      5
     );
+  } else {
+    // Migration check: ensure 'landing_page' package exists for existing databases
+    const hasLandingPkg = db.prepare("SELECT id FROM packages WHERE key = 'landing_page'").get() as any;
+    if (!hasLandingPkg) {
+      db.prepare(`
+        INSERT INTO packages (key, name, starting_price, description, features_json, ideal_for, sort_order)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        'landing_page',
+        'Landing Page / Launchpad',
+        2500,
+        'A high-impact, single-page responsive website designed for rapid launches, startup profiles, and immediate lead generation.',
+        JSON.stringify([
+          '1 high-impact responsive single-page layout (Hero, About, Services, Call to Action)',
+          'Direct WhatsApp click-to-chat & lead capture contact form',
+          'Mobile-first responsive UX and fast asset loading',
+          'Basic Google Search Console indexing & local SEO meta tags',
+          'Social media preview card (Open Graph / WhatsApp preview) & SSL encryption',
+          'Standard 7-day post-launch warranty & setup support',
+        ]),
+        'Startups, sole proprietors, promotions, single products, and micro-enterprises',
+        1
+      );
+
+      db.prepare("UPDATE packages SET sort_order = 2 WHERE key = 'starter'").run();
+      db.prepare("UPDATE packages SET sort_order = 3 WHERE key = 'business'").run();
+      db.prepare("UPDATE packages SET sort_order = 4 WHERE key = 'professional'").run();
+      db.prepare("UPDATE packages SET sort_order = 5 WHERE key = 'custom_app'").run();
+    }
   }
 
   // Seed Approved Optional Services

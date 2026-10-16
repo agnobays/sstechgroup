@@ -26,8 +26,8 @@ export const PackagesPage: React.FC = () => {
     <div className="space-y-20 py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
       <SEO
         title="Website Packages & Pricing Rates South Africa"
-        description="Transparent website design packages and custom application pricing in South Africa. Starter websites from R 7,500, Business platforms from R 12,500."
-        keywords="website design pricing south africa, affordable website packages, web development rates durban johannesburg, enterprise web costs, email marketing pricing"
+        description="Transparent website design packages and custom application pricing in South Africa. Landing pages from R 2,500, Starter websites from R 7,500, Business platforms from R 12,500."
+        keywords="website design pricing south africa, affordable website packages, landing page design r2500 south africa, web development rates durban johannesburg, enterprise web costs, email marketing pricing"
       />
       <div className="bg-spotlight-beam opacity-60" />
 
@@ -41,26 +41,34 @@ export const PackagesPage: React.FC = () => {
           Website &amp; Solution Packages
         </h1>
         <p className="text-base sm:text-lg text-brand-warm-grey leading-relaxed">
-          Approved baseline packages, transparent inclusions, and configurable digital services engineered for South African businesses and organisations.
+          Approved baseline packages, transparent inclusions, and configurable digital services starting from R 2,500 engineered for South African businesses.
         </p>
       </section>
 
       {/* Package Cards Grid */}
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
         {packages.map((pkg) => {
-          const isPro = pkg.key === 'business';
+          const isPopular = pkg.key === 'business';
+          const isEntry = pkg.key === 'landing_page';
           return (
             <div
               key={pkg.id}
-              className={`rounded-2xl md:rounded-3xl border flex flex-col justify-between p-6 sm:p-7 relative transition-all duration-300 ${
-                isPro
+              className={`rounded-2xl md:rounded-3xl border flex flex-col justify-between p-5 sm:p-6 relative transition-all duration-300 ${
+                isPopular
                   ? 'glass-card border-brand-amber/50 shadow-[0_0_35px_rgba(246,115,0,0.2)]'
+                  : isEntry
+                  ? 'glass-card border-brand-gold/40 shadow-[0_0_25px_rgba(217,173,50,0.15)]'
                   : 'glass-card border-white/10 hover:border-brand-amber/30'
               }`}
             >
-              {isPro && (
+              {isPopular && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3.5 py-0.5 rounded-full bg-gradient-to-r from-brand-amber to-brand-gold text-black text-[10px] font-bold uppercase tracking-wider shadow-md">
                   Most Popular
+                </div>
+              )}
+              {isEntry && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-brand-gold text-brand-black text-[10px] font-bold uppercase tracking-wider shadow-md">
+                  Fastest Launch
                 </div>
               )}
 
@@ -113,8 +121,10 @@ export const PackagesPage: React.FC = () => {
                 <Link
                   to={`/get-a-quote?package=${pkg.key}`}
                   className={`w-full flex items-center justify-center py-2.5 px-4 rounded-full text-xs font-bold transition-all ${
-                    isPro
-                      ? 'bg-white text-black hover:bg-neutral-100 shadow-[0_0_20px_rgba(255,255,255,0.25)]'
+                    isPopular
+                      ? 'bg-brand-amber text-black hover:bg-brand-gold shadow-[0_0_20px_rgba(246,115,0,0.3)]'
+                      : isEntry
+                      ? 'bg-brand-gold text-black hover:bg-brand-gold-light shadow-[0_0_20px_rgba(217,173,50,0.3)]'
                       : 'glass-pill text-white hover:bg-white hover:text-black'
                   }`}
                 >
