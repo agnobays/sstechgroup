@@ -2,7 +2,6 @@
   "name": "ss-tech-group",
   "version": "1.0.0",
   "private": true,
-  "type": "module",
   "main": "dist-server/index.js",
   "scripts": {
     "dev": "vite",
