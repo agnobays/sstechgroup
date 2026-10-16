@@ -617,9 +617,17 @@ export const GetAQuotePage: React.FC = () => {
                   href={`/api/public-quotes/${generatedQuote.access_token}/invoice-pdf`}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center px-4 py-2 rounded-lg text-xs font-bold bg-brand-gold text-brand-black hover:bg-brand-gold-light"
+                  className="inline-flex items-center px-4 py-2.5 rounded-lg text-xs font-bold bg-brand-gold text-brand-black hover:bg-brand-gold-light transition-all shadow-md"
                 >
                   <Download className="w-4 h-4 mr-1.5" /> Download Tax Invoice PDF
+                </a>
+                <a
+                  href={`/api/public-quotes/${generatedQuote.access_token}/pdf`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center px-4 py-2.5 rounded-lg text-xs font-semibold bg-brand-black text-brand-off-white border border-brand-border hover:border-brand-gold transition-colors"
+                >
+                  <Download className="w-4 h-4 mr-1.5" /> Download Quotation PDF
                 </a>
               </div>
             </div>

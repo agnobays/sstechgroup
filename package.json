@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "dev:server": "tsx watch server/index.ts",
-    "build": "tsc && vite build && node -e \"const fs=require('fs'); fs.copyFileSync('dist/index.html', 'index.html');\"",
+    "build": "node -e \"const fs=require('fs'); if(fs.existsSync('index.source.html')) fs.copyFileSync('index.source.html', 'index.html');\" && tsc && vite build && node -e \"const fs=require('fs'); fs.copyFileSync('dist/index.html', 'index.html'); fs.cpSync('dist/assets', 'assets', {recursive: true});\"",
     "build:server": "tsc -p tsconfig.server.json",
     "start": "node dist-server/index.js",
     "test": "vitest run",

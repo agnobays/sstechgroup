@@ -33,6 +33,15 @@ export const InvoicesPage: React.FC = () => {
   const [emailSending, setEmailSending] = useState(false);
   const [emailSuccess, setEmailSuccess] = useState<string | null>(null);
   const [emailError, setEmailError] = useState<string | null>(null);
+  const [hasBeenSentBefore, setHasBeenSentBefore] = useState(false);
+  const [lastSentDetails, setLastSentDetails] = useState<string | null>(null);
+  const [confirmResendCheckbox, setConfirmResendCheckbox] = useState(false);
+
+  // Delete Invoice Modal State
+  const [invoiceToDelete, setInvoiceToDelete] = useState<Invoice | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeletingInvoice, setIsDeletingInvoice] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   // Invoice Creator / Editor Modal State
   const [isEditorOpen, setIsEditorOpen] = useState(false);
@@ -299,6 +308,28 @@ export const InvoicesPage: React.FC = () => {
     }
   };
 
+  const openDeleteModal = (inv: Invoice) => {
+    setInvoiceToDelete(inv);
+    setDeleteError(null);
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDeleteInvoice = async () => {
+    if (!invoiceToDelete) return;
+    setIsDeletingInvoice(true);
+    setDeleteError(null);
+    try {
+      await apiRequest(`/invoices/${invoiceToDelete.id}`, { method: 'DELETE' });
+      setIsDeleteModalOpen(false);
+      setInvoiceToDelete(null);
+      fetchInvoices();
+    } catch (err: any) {
+      setDeleteError(err.message || 'Failed to delete invoice.');
+    } finally {
+      setIsDeletingInvoice(false);
+    }
+  };
+
   const openEmailModal = (inv: Invoice) => {
     setEmailTargetInvoice(inv);
     const client = clients.find((c) => c.id === inv.client_id);
@@ -309,6 +340,12 @@ export const InvoicesPage: React.FC = () => {
     );
     setEmailSuccess(null);
     setEmailError(null);
+    setConfirmResendCheckbox(false);
+
+    const isAlreadySent = inv.status === 'Issued' || inv.status === 'Paid' || inv.status === 'Partially Paid';
+    setHasBeenSentBefore(isAlreadySent);
+    setLastSentDetails(isAlreadySent ? `Invoice status is currently '${inv.status}'.` : null);
+
     setIsEmailModalOpen(true);
   };
 
@@ -317,6 +354,11 @@ export const InvoicesPage: React.FC = () => {
     if (!emailTargetInvoice) return;
     if (!recipientEmail || !recipientEmail.includes('@')) {
       setEmailError('Please enter a valid recipient email address.');
+      return;
+    }
+
+    if (hasBeenSentBefore && !confirmResendCheckbox) {
+      setEmailError('This tax invoice has already been issued/sent. Please check the confirmation box below to verify re-sending.');
       return;
     }
 
@@ -331,6 +373,7 @@ export const InvoicesPage: React.FC = () => {
           recipient_email: recipientEmail,
           subject: emailSubject,
           custom_message: customEmailMessage,
+          confirm_resend: confirmResendCheckbox,
         }),
       });
 
@@ -341,6 +384,10 @@ export const InvoicesPage: React.FC = () => {
         setEmailSuccess(null);
       }, 2000);
     } catch (err: any) {
+      if (err.requiresConfirmation || err.status === 409) {
+        setHasBeenSentBefore(true);
+        setLastSentDetails(err.message || 'Invoice was previously sent.');
+      }
       setEmailError(err.message || 'Failed to dispatch tax invoice email.');
     } finally {
       setEmailSending(false);
@@ -562,6 +609,15 @@ export const InvoicesPage: React.FC = () => {
                           title="Edit invoice"
                         >
                           <Edit2 className="w-3.5 h-3.5" />
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => openDeleteModal(inv)}
+                          className="p-1.5 rounded bg-brand-black border border-brand-border text-brand-warm-grey hover:text-red-400 hover:border-red-500/50 transition-colors"
+                          title="Delete invoice"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     </td>
@@ -1061,6 +1117,50 @@ export const InvoicesPage: React.FC = () => {
               </div>
             )}
 
+            {/* Already Sent Warning Banner with Mandatory Resend Check */}
+            {hasBeenSentBefore ? (
+              <div className="p-4 rounded-xl bg-amber-950/40 border border-amber-600/70 space-y-2.5">
+                <div className="flex items-center space-x-2 text-brand-gold font-bold text-xs">
+                  <AlertCircle className="w-4 h-4 flex-shrink-0 text-brand-gold" />
+                  <span>Notice: Tax Invoice Already Issued / Sent</span>
+                </div>
+                <p className="text-[11px] text-brand-off-white/90 leading-relaxed">
+                  {lastSentDetails || `This invoice has already been issued or dispatched. Re-sending will dispatch a fresh copy to the client.`}
+                </p>
+                <label className="flex items-start space-x-2.5 pt-2 border-t border-amber-800/50 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={confirmResendCheckbox}
+                    onChange={(e) => setConfirmResendCheckbox(e.target.checked)}
+                    className="mt-0.5 rounded bg-brand-black border-brand-border text-brand-gold focus:ring-brand-gold w-4 h-4 cursor-pointer"
+                  />
+                  <span className="text-xs text-brand-gold font-semibold leading-snug">
+                    Confirm re-sending invoice to {recipientEmail || 'client'}
+                  </span>
+                </label>
+              </div>
+            ) : (
+              <div className="p-3.5 rounded-xl bg-brand-black border border-brand-border text-xs flex items-center justify-between">
+                <div>
+                  <div className="text-[10px] text-brand-warm-grey uppercase tracking-wider font-semibold">
+                    Client Recipient
+                  </div>
+                  <div className="font-semibold text-brand-off-white mt-0.5">
+                    {emailTargetInvoice.client_name}
+                    {emailTargetInvoice.client_company && ` • ${emailTargetInvoice.client_company}`}
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-[10px] text-brand-warm-grey uppercase tracking-wider font-semibold">
+                    Balance Due
+                  </div>
+                  <div className="font-mono font-bold text-brand-gold text-sm">
+                    R {emailTargetInvoice.balance_due.toFixed(2)}
+                  </div>
+                </div>
+              </div>
+            )}
+
             <form onSubmit={handleSendEmail} className="space-y-4">
               <div>
                 <label className="block text-xs font-semibold text-brand-off-white mb-1.5">
@@ -1138,19 +1238,83 @@ export const InvoicesPage: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  disabled={emailSending}
-                  className="px-6 py-2.5 rounded-lg text-xs font-bold bg-brand-gold hover:bg-brand-gold-light text-brand-black transition-all shadow-md flex items-center disabled:opacity-50"
+                  disabled={emailSending || (hasBeenSentBefore && !confirmResendCheckbox)}
+                  className="px-6 py-2.5 rounded-lg text-xs font-bold bg-brand-gold hover:bg-brand-gold-light text-brand-black transition-all shadow-md flex items-center disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed"
                 >
                   {emailSending ? (
                     'Sending Invoice...'
                   ) : (
                     <>
-                      <Send className="w-3.5 h-3.5 mr-1.5" /> Send Tax Invoice with PDF
+                      <Send className="w-3.5 h-3.5 mr-1.5" />
+                      {hasBeenSentBefore ? 'Confirm & Re-send Invoice' : 'Send Tax Invoice with PDF'}
                     </>
                   )}
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {isDeleteModalOpen && invoiceToDelete && (
+        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+          <div className="bg-brand-charcoal border border-brand-border rounded-2xl w-full max-w-md p-6 space-y-5 shadow-2xl">
+            <div className="flex items-center space-x-3 text-red-400">
+              <div className="p-2 rounded-lg bg-red-950/60 border border-red-800/60">
+                <Trash2 className="w-5 h-5 text-red-400" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-brand-off-white">Delete Tax Invoice</h3>
+                <p className="text-xs text-brand-warm-grey">Permanent accounting action</p>
+              </div>
+            </div>
+
+            <p className="text-xs text-brand-off-white/90 leading-relaxed">
+              Are you sure you want to permanently delete invoice{' '}
+              <strong className="text-brand-gold">{invoiceToDelete.invoice_number}</strong> for{' '}
+              <strong className="text-brand-off-white">{invoiceToDelete.client_name}</strong> (Total: R {invoiceToDelete.total_amount.toFixed(2)})?
+            </p>
+
+            {invoiceToDelete.paid_amount > 0 && (
+              <div className="p-3 rounded-xl bg-red-950/60 border border-red-800 text-xs text-red-300">
+                ⚠️ Warning: This invoice has <strong>R {invoiceToDelete.paid_amount.toFixed(2)}</strong> in recorded payments. Deleting this invoice will remove these payment records.
+              </div>
+            )}
+
+            {invoiceToDelete.quote_id && (
+              <div className="p-3 rounded-xl bg-amber-950/40 border border-amber-800/60 text-xs text-brand-gold">
+                ℹ️ Note: This invoice was generated from a quotation. Deleting it will restore the source quote to 'Sent' status.
+              </div>
+            )}
+
+            {deleteError && (
+              <div className="p-3 rounded-xl bg-red-950/60 border border-red-800 text-red-300 text-xs">
+                {deleteError}
+              </div>
+            )}
+
+            <div className="pt-3 border-t border-brand-border flex items-center justify-end space-x-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsDeleteModalOpen(false);
+                  setInvoiceToDelete(null);
+                }}
+                disabled={isDeletingInvoice}
+                className="px-4 py-2.5 rounded-lg text-xs font-semibold bg-brand-black text-brand-warm-grey hover:text-brand-off-white border border-brand-border"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmDeleteInvoice}
+                disabled={isDeletingInvoice}
+                className="px-5 py-2.5 rounded-lg text-xs font-bold bg-red-600 hover:bg-red-700 text-white transition-all shadow-md disabled:opacity-50 flex items-center"
+              >
+                {isDeletingInvoice ? 'Deleting...' : 'Delete Invoice'}
+              </button>
+            </div>
           </div>
         </div>
       )}

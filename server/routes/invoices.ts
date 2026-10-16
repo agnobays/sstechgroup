@@ -385,9 +385,74 @@ router.get('/:id/pdf', (req: Request, res: Response) => {
   }
 });
 
+router.delete('/:id', (req: Request, res: Response) => {
+  const invoice = db.prepare('SELECT id, invoice_number, quote_id FROM invoices WHERE id = ?').get(req.params.id) as any;
+  if (!invoice) {
+    res.status(404).json({ error: 'Invoice not found.' });
+    return;
+  }
+
+  const deleteTransaction = db.transaction(() => {
+    // 1. Delete payments
+    db.prepare('DELETE FROM payments WHERE invoice_id = ?').run(invoice.id);
+
+    // 2. Delete invoice items
+    db.prepare('DELETE FROM invoice_items WHERE invoice_id = ?').run(invoice.id);
+
+    // 3. Unlink quote if this invoice was converted from a quote
+    db.prepare(`
+      UPDATE quotes
+      SET converted_to_invoice_id = NULL, status = 'Sent', updated_at = CURRENT_TIMESTAMP
+      WHERE converted_to_invoice_id = ?
+    `).run(invoice.id);
+
+    // 4. Delete invoice
+    db.prepare('DELETE FROM invoices WHERE id = ?').run(invoice.id);
+  });
+
+  deleteTransaction();
+
+  recordAuditLog({
+    adminId: req.admin?.id,
+    adminName: req.admin?.fullName || 'Admin',
+    action: 'DELETE_INVOICE',
+    entityType: 'INVOICE',
+    entityId: invoice.id,
+    details: `Deleted tax invoice ${invoice.invoice_number}`,
+    ipAddress: req.ip,
+  });
+
+  res.json({ message: `Invoice ${invoice.invoice_number} deleted successfully.` });
+});
+
 router.post('/:id/send-email', async (req: Request, res: Response) => {
   try {
-    const { recipient_email, subject, custom_message } = req.body;
+    const { recipient_email, subject, custom_message, confirm_resend } = req.body;
+    const invoice = db.prepare('SELECT * FROM invoices WHERE id = ?').get(req.params.id) as any;
+    if (!invoice) {
+      res.status(404).json({ error: 'Invoice not found.' });
+      return;
+    }
+
+    const priorSends = db.prepare(`
+      SELECT created_at, details FROM audit_logs
+      WHERE entity_type = 'INVOICE' AND entity_id = ? AND action = 'EMAIL_INVOICE'
+      ORDER BY created_at DESC
+    `).all(invoice.id) as any[];
+
+    const hasBeenSent = invoice.status === 'Issued' || invoice.status === 'Paid' || invoice.status === 'Partially Paid' || priorSends.length > 0;
+
+    if (hasBeenSent && !confirm_resend) {
+      const lastSentTime = priorSends[0]?.created_at || invoice.updated_at;
+      res.status(409).json({
+        error: `This invoice has already been issued/sent previously (Last sent: ${lastSentTime}). Please confirm re-sending.`,
+        requiresConfirmation: true,
+        lastSentAt: lastSentTime,
+        sentCount: priorSends.length,
+      });
+      return;
+    }
+
     const result = await sendInvoiceEmail({
       invoiceId: Number(req.params.id),
       recipientEmail: recipient_email,

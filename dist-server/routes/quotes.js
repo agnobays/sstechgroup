@@ -297,9 +297,80 @@ router.get('/:id/pdf', (req, res) => {
         res.status(404).json({ error: err.message || 'Quotation not found.' });
     }
 });
+router.delete('/:id', (req, res) => {
+    const quote = db.prepare('SELECT id, quote_number, client_id, converted_to_invoice_id FROM quotes WHERE id = ?').get(req.params.id);
+    if (!quote) {
+        res.status(404).json({ error: 'Quotation not found.' });
+        return;
+    }
+    const deleteTransaction = db.transaction(() => {
+        // 1. Delete items
+        db.prepare('DELETE FROM quote_items WHERE quote_id = ?').run(quote.id);
+        // 2. Unlink follow-ups
+        db.prepare('UPDATE follow_ups SET quote_id = NULL WHERE quote_id = ?').run(quote.id);
+        // 3. Unlink invoice if attached
+        if (quote.converted_to_invoice_id) {
+            db.prepare('UPDATE invoices SET quote_id = NULL WHERE id = ?').run(quote.converted_to_invoice_id);
+        }
+        // 4. Delete quote
+        db.prepare('DELETE FROM quotes WHERE id = ?').run(quote.id);
+    });
+    deleteTransaction();
+    recordAuditLog({
+        adminId: req.admin?.id,
+        adminName: req.admin?.fullName || 'Admin',
+        action: 'DELETE_QUOTE',
+        entityType: 'QUOTE',
+        entityId: quote.id,
+        details: `Deleted quotation ${quote.quote_number}`,
+        ipAddress: req.ip,
+    });
+    res.json({ message: `Quotation ${quote.quote_number} deleted successfully.` });
+});
+router.get('/:id/send-history', (req, res) => {
+    const quote = db.prepare('SELECT id, quote_number, status, updated_at FROM quotes WHERE id = ?').get(req.params.id);
+    if (!quote) {
+        res.status(404).json({ error: 'Quotation not found.' });
+        return;
+    }
+    const sends = db.prepare(`
+    SELECT id, admin_name, details, created_at
+    FROM audit_logs
+    WHERE entity_type = 'QUOTE' AND entity_id = ? AND action = 'EMAIL_QUOTE'
+    ORDER BY created_at DESC
+  `).all(quote.id);
+    res.json({
+        quote_number: quote.quote_number,
+        status: quote.status,
+        sends,
+        has_been_sent: quote.status === 'Sent' || quote.status === 'Accepted' || sends.length > 0,
+    });
+});
 router.post('/:id/send-email', async (req, res) => {
     try {
-        const { recipient_email, subject, custom_message } = req.body;
+        const { recipient_email, subject, custom_message, confirm_resend } = req.body;
+        const quote = db.prepare('SELECT * FROM quotes WHERE id = ?').get(req.params.id);
+        if (!quote) {
+            res.status(404).json({ error: 'Quotation not found.' });
+            return;
+        }
+        // Check if previously sent
+        const priorSends = db.prepare(`
+      SELECT created_at, details FROM audit_logs
+      WHERE entity_type = 'QUOTE' AND entity_id = ? AND action = 'EMAIL_QUOTE'
+      ORDER BY created_at DESC
+    `).all(quote.id);
+        const hasBeenSent = quote.status === 'Sent' || quote.status === 'Accepted' || priorSends.length > 0;
+        if (hasBeenSent && !confirm_resend) {
+            const lastSentTime = priorSends[0]?.created_at || quote.updated_at;
+            res.status(409).json({
+                error: `This quotation was already sent previously (Last sent: ${lastSentTime}). Please confirm re-sending.`,
+                requiresConfirmation: true,
+                lastSentAt: lastSentTime,
+                sentCount: priorSends.length,
+            });
+            return;
+        }
         const result = await sendQuoteEmail({
             quoteId: Number(req.params.id),
             recipientEmail: recipient_email,
