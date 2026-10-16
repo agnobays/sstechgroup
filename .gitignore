@@ -23,3 +23,7 @@ staging_prod/
 # OS files
 .DS_Store
 Thumbs.db
+
+# CloudLinux DirectAdmin Passenger configuration (server specific)
+.htaccess
+
