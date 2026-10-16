@@ -104,15 +104,14 @@ if (process.env.NODE_ENV !== 'test') {
     typeof (global as any).PhusionPassenger !== 'undefined' ||
     Boolean(process.env.PASSENGER_APP_ENV) ||
     Boolean(process.env.IN_PASSENGER) ||
-    process.env.PORT === 'passenger';
+    process.env.PORT === 'passenger' ||
+    process.env.NODE_ENV === 'production';
 
   if (isPassenger) {
     portToListen = 'passenger';
   } else if (process.env.PORT) {
     if (!isNaN(Number(process.env.PORT))) {
       portToListen = Number(process.env.PORT);
-    } else if (process.env.PORT.toLowerCase() === 'production' || process.env.PORT.toLowerCase() === 'development') {
-      portToListen = 'passenger';
     } else {
       portToListen = process.env.PORT;
     }
