@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "dev:server": "tsx watch server/index.ts",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build && node -e \"const fs=require('fs'); fs.copyFileSync('dist/index.html', 'index.html');\"",
     "build:server": "tsc -p tsconfig.server.json",
     "start": "node dist-server/index.js",
     "test": "vitest run",
