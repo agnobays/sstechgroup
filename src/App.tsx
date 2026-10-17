@@ -14,6 +14,7 @@ import { PackagesPage } from './pages/PackagesPage';
 import { GetAQuotePage } from './pages/GetAQuotePage';
 import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
 import { NotFoundPage } from './pages/NotFoundPage';
+import { QhaweOnboardingPage } from './pages/QhaweOnboardingPage';
 
 // Admin Pages & Guards
 import { ProtectedRoute } from './admin/components/ProtectedRoute';
@@ -86,6 +87,8 @@ export const App: React.FC = () => {
       title = 'How We Work — 6-Step Delivery Framework | S&S Tech Group';
     } else if (path === '/contact') {
       title = 'Start a Project & Enquiries | S&S Tech Group';
+    } else if (path.startsWith('/onboarding') || path.startsWith('/forms')) {
+      title = 'Qhawe Credit Solutions — Platform Onboarding | S&S Tech Group';
     } else if (path.startsWith('/admin')) {
       title = 'Admin Business Portal | S&S Tech Group';
     }
@@ -179,6 +182,30 @@ export const App: React.FC = () => {
         element={
           <PublicLayout>
             <ContactPage />
+          </PublicLayout>
+        }
+      />
+      <Route
+        path="/onboarding/qhawe"
+        element={
+          <PublicLayout>
+            <QhaweOnboardingPage />
+          </PublicLayout>
+        }
+      />
+      <Route
+        path="/forms/qhawe"
+        element={
+          <PublicLayout>
+            <QhaweOnboardingPage />
+          </PublicLayout>
+        }
+      />
+      <Route
+        path="/onboarding/credit-solutions"
+        element={
+          <PublicLayout>
+            <QhaweOnboardingPage />
           </PublicLayout>
         }
       />
