@@ -15,6 +15,7 @@ import {
   Shield,
   User,
   Mail,
+  FileCheck,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -38,6 +39,7 @@ export const AdminLayout: React.FC = () => {
     { label: 'Email Vault', path: '/admin/emails', icon: Mail },
     { label: 'Packages & Rates', path: '/admin/pricing', icon: Settings },
     { label: 'Clients', path: '/admin/clients', icon: Users },
+    { label: 'Client Onboarding', path: '/admin/onboarding', icon: FileCheck },
     { label: 'Enquiries', path: '/admin/enquiries', icon: Inbox },
     { label: 'Audit Logs', path: '/admin/audit-logs', icon: ClipboardList },
     { label: 'Company Settings', path: '/admin/settings', icon: Settings },

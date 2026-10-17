@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Building2,
   Palette,
@@ -17,21 +17,34 @@ import {
   MapPin,
   Lock,
   Globe,
-  FileCheck
+  FileCheck,
+  Upload,
+  Image as ImageIcon,
+  Trash2,
+  Edit3,
+  Check,
+  RefreshCw,
+  Eye,
 } from 'lucide-react';
 import { SEO } from '../components/SEO';
 
 const LOCAL_STORAGE_KEY = 'sstech_qhawe_onboarding_draft';
+const LOCAL_STORAGE_REF_KEY = 'sstech_qhawe_submission_ref';
 
 export const QhaweOnboardingPage: React.FC = () => {
   const [activeStep, setActiveStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submittedRef, setSubmittedRef] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [lastSavedTime, setLastSavedTime] = useState<string>('Auto-save active');
   const [submitSuccess, setSubmitSuccess] = useState<{
     referenceNumber: string;
     message: string;
     receivedAt: string;
+    revision?: number;
   } | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Form State with sensible defaults extracted from qhawecreditsolutions.co.za
   const [form, setForm] = useState({
@@ -49,6 +62,7 @@ export const QhaweOnboardingPage: React.FC = () => {
     // Step 2: Brand & Design Identity
     logo_status: 'Vector SVG available, can supply high-res transparent PNG',
     logo_download_link: '',
+    logo_file: null as { name: string; size: number; type: string; dataUrl: string } | null,
     app_icon_symbol: 'Use "Q" Shield / Crest motif',
     primary_color: '#0A2540', // Navy
     accent_color: '#D97706',  // Gold
@@ -110,15 +124,37 @@ export const QhaweOnboardingPage: React.FC = () => {
     special_requirements: ''
   });
 
-  // Restore draft from local storage on mount
+  // Restore draft or previous submission on mount
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
-      if (saved) {
-        setForm((prev) => ({ ...prev, ...JSON.parse(saved) }));
-      }
-    } catch (e) {
-      // Ignore
+    const urlParams = new URLSearchParams(window.location.search);
+    const refParam = urlParams.get('ref') || localStorage.getItem(LOCAL_STORAGE_REF_KEY);
+
+    if (refParam) {
+      setSubmittedRef(refParam);
+      // Fetch latest recorded submission from server if available
+      fetch(`/api/onboarding/${refParam}`)
+        .then((res) => res.json())
+        .then((result) => {
+          if (result.success && result.submission?.data) {
+            setForm((prev) => ({ ...prev, ...result.submission.data }));
+            setLastSavedTime('Synced with server');
+          }
+        })
+        .catch(() => {
+          // If offline, fallback to local storage draft
+          try {
+            const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+            if (saved) setForm((prev) => ({ ...prev, ...JSON.parse(saved) }));
+          } catch (e) {}
+        });
+    } else {
+      try {
+        const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+        if (saved) {
+          setForm((prev) => ({ ...prev, ...JSON.parse(saved) }));
+          setLastSavedTime('Draft restored from browser storage');
+        }
+      } catch (e) {}
     }
   }, []);
 
@@ -128,6 +164,7 @@ export const QhaweOnboardingPage: React.FC = () => {
       const updated = { ...prev, [key]: value };
       try {
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
+        setLastSavedTime('Saved to browser');
       } catch (e) {}
       return updated;
     });
@@ -144,14 +181,47 @@ export const QhaweOnboardingPage: React.FC = () => {
     updateField('accepted_employment', list);
   };
 
+  // Direct Logo File Upload handler
+  const handleLogoFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Logo file size is too large (max 10MB). Please choose a smaller file or paste a cloud link.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result as string;
+      updateField('logo_file', {
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        dataUrl,
+      });
+      updateField('logo_status', `Uploaded file: ${file.name}`);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveLogo = () => {
+    updateField('logo_file', null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
     setIsSubmitting(true);
 
     try {
-      const res = await fetch('/api/onboarding', {
-        method: 'POST',
+      const isUpdating = isEditing && submittedRef;
+      const endpoint = isUpdating ? `/api/onboarding/${submittedRef}` : '/api/onboarding';
+      const method = isUpdating ? 'PUT' : 'POST';
+
+      const res = await fetch(endpoint, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           client_slug: 'qhawe',
@@ -168,14 +238,20 @@ export const QhaweOnboardingPage: React.FC = () => {
         throw new Error(data.error || 'Failed to submit onboarding form');
       }
 
+      const activeRef = data.referenceNumber || submittedRef;
+      if (activeRef) {
+        setSubmittedRef(activeRef);
+        localStorage.setItem(LOCAL_STORAGE_REF_KEY, activeRef);
+      }
+
       setSubmitSuccess({
-        referenceNumber: data.referenceNumber,
-        message: data.message,
-        receivedAt: data.receivedAt,
+        referenceNumber: activeRef || 'SPEC-QHAWE',
+        message: data.message || 'Specifications recorded successfully.',
+        receivedAt: data.updatedAt || data.receivedAt || new Date().toISOString(),
+        revision: data.revision || 1,
       });
 
-      // Clear draft on successful submission
-      localStorage.removeItem(LOCAL_STORAGE_KEY);
+      setIsEditing(false);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err: any) {
       setErrorMsg(err.message || 'Network error occurred. Please try submitting again.');
@@ -221,10 +297,16 @@ export const QhaweOnboardingPage: React.FC = () => {
           <div className="w-16 h-16 bg-brand-gold/10 text-brand-gold rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle2 className="w-10 h-10" />
           </div>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold mb-3">
+            <Check className="w-3.5 h-3.5" />
+            {submitSuccess.revision && submitSuccess.revision > 1
+              ? `Updated Revision (v${submitSuccess.revision}) Live on Admin Dashboard`
+              : 'Specifications Cataloged (v1)'}
+          </div>
           <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">Specifications Successfully Recorded</h2>
           <p className="text-gray-300 max-w-lg mx-auto mb-6">
             Thank you, team Qhawe! Your lending platform requirements, branding parameters, and underwriting rules have been
-            securely cataloged.
+            securely cataloged in our portal.
           </p>
 
           <div className="bg-brand-black/60 border border-gray-700/60 rounded-xl p-6 max-w-md mx-auto mb-8 text-left">
@@ -233,9 +315,25 @@ export const QhaweOnboardingPage: React.FC = () => {
             <div className="mt-3 text-xs text-gray-400">
               Recorded at: <span className="text-gray-200">{new Date(submitSuccess.receivedAt).toLocaleString()}</span>
             </div>
+            {submitSuccess.revision && submitSuccess.revision > 1 && (
+              <div className="mt-1 text-xs text-emerald-400">
+                Revision count: <span className="font-semibold">v{submitSuccess.revision}</span>
+              </div>
+            )}
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <div className="flex flex-wrap gap-3 justify-center items-center">
+            <button
+              onClick={() => {
+                setIsEditing(true);
+                setSubmitSuccess(null);
+                setActiveStep(1);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="px-6 py-3 rounded-lg bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 font-semibold flex items-center gap-2 border border-blue-500/40 transition shadow-md"
+            >
+              <Edit3 className="w-4 h-4 text-blue-400" /> Make Changes / Edit Specifications
+            </button>
             <button
               onClick={() => window.print()}
               className="px-6 py-3 rounded-lg bg-gray-800 hover:bg-gray-700 text-white font-medium flex items-center gap-2 border border-gray-600 transition"
@@ -243,51 +341,106 @@ export const QhaweOnboardingPage: React.FC = () => {
               <Printer className="w-4 h-4" /> Print / Save Summary
             </button>
             <a
-              href="https://wa.me/27698847200?text=Hi%20S%26S%20Tech%20Group,%20we%20just%20submitted%20the%20Qhawe%20lending%20platform%20specifications%20(Ref:%20"
+              href={`https://wa.me/27698847200?text=Hi%20S%26S%20Tech%20Group,%20we%20just%20submitted%20the%20Qhawe%20lending%20platform%20specifications%20(Ref:%20${submitSuccess.referenceNumber})`}
               target="_blank"
               rel="noopener noreferrer"
               className="px-6 py-3 rounded-lg bg-brand-gold hover:bg-brand-gold-light text-brand-black font-semibold flex items-center gap-2 transition"
             >
-              <Phone className="w-4 h-4" /> Notify S&S Tech Group via WhatsApp
+              <Phone className="w-4 h-4" /> WhatsApp Us
             </a>
           </div>
         </div>
       ) : (
-        <div className="bg-brand-gray/30 border border-gray-800 rounded-2xl shadow-xl overflow-hidden backdrop-blur-sm">
-          {/* Step Pill Navigation */}
-          <div className="border-b border-gray-800 bg-brand-black/50 p-3 sm:p-4 overflow-x-auto">
-            <div className="flex items-center justify-between min-w-[650px] gap-2">
-              {steps.map((s) => {
-                const Icon = s.icon;
-                const isActive = activeStep === s.id;
-                const isPassed = activeStep > s.id;
-                return (
-                  <button
-                    key={s.id}
-                    onClick={() => setActiveStep(s.id)}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold transition ${
-                      isActive
-                        ? 'bg-brand-gold text-brand-black shadow-md'
-                        : isPassed
-                        ? 'bg-brand-gold/10 text-brand-gold border border-brand-gold/20'
-                        : 'text-gray-400 hover:text-white hover:bg-gray-800/40'
-                    }`}
-                  >
-                    <Icon className="w-4 h-4" />
-                    <span>{s.title}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          <form onSubmit={handleSubmit} className="p-6 sm:p-8">
-            {errorMsg && (
-              <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 flex items-center gap-3">
-                <AlertCircle className="w-5 h-5 flex-shrink-0" />
-                <span className="text-sm">{errorMsg}</span>
+        <div className="space-y-4">
+          {/* Active Editing / Previous Submission Banner */}
+          {submittedRef && isEditing && (
+            <div className="p-4 rounded-xl bg-blue-950/70 border border-blue-500/40 text-blue-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg">
+              <div className="flex items-center gap-3">
+                <Sparkles className="w-5 h-5 text-blue-400 shrink-0" />
+                <div>
+                  <p className="text-xs font-bold text-white">
+                    Editing Specifications — Reference: <span className="font-mono text-brand-gold">{submittedRef}</span>
+                  </p>
+                  <p className="text-[11px] text-blue-300">
+                    Any changes you submit will immediately reflect on the S&S Tech Group Admin Dashboard with an updated revision timestamp.
+                  </p>
+                </div>
               </div>
-            )}
+              <button
+                type="button"
+                onClick={() => {
+                  setIsEditing(false);
+                  setSubmitSuccess({
+                    referenceNumber: submittedRef,
+                    message: 'Viewing previously recorded specifications.',
+                    receivedAt: new Date().toISOString(),
+                  });
+                }}
+                className="text-xs text-blue-300 hover:text-white underline font-medium self-end sm:self-center"
+              >
+                Return to Summary
+              </button>
+            </div>
+          )}
+
+          {submittedRef && !isEditing && (
+            <div className="p-3.5 rounded-xl bg-amber-950/50 border border-amber-500/30 text-amber-200 flex items-center justify-between gap-3 text-xs">
+              <div className="flex items-center gap-2">
+                <FileCheck className="w-4 h-4 text-brand-gold shrink-0" />
+                <span>You have a submitted specification on file (<strong className="font-mono text-brand-gold">{submittedRef}</strong>).</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsEditing(true)}
+                className="font-semibold text-brand-gold hover:underline"
+              >
+                Edit &amp; Update Changes &rarr;
+              </button>
+            </div>
+          )}
+
+          <div className="bg-brand-gray/30 border border-gray-800 rounded-2xl shadow-xl overflow-hidden backdrop-blur-sm">
+            {/* Step Pill Navigation & Autosave status */}
+            <div className="border-b border-gray-800 bg-brand-black/50 p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="overflow-x-auto pb-1 sm:pb-0">
+                <div className="flex items-center min-w-[620px] gap-2">
+                  {steps.map((s) => {
+                    const Icon = s.icon;
+                    const isActive = activeStep === s.id;
+                    const isPassed = activeStep > s.id;
+                    return (
+                      <button
+                        key={s.id}
+                        onClick={() => setActiveStep(s.id)}
+                        className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold transition ${
+                          isActive
+                            ? 'bg-brand-gold text-brand-black shadow-md'
+                            : isPassed
+                            ? 'bg-brand-gold/10 text-brand-gold border border-brand-gold/20'
+                            : 'text-gray-400 hover:text-white hover:bg-gray-800/40'
+                        }`}
+                      >
+                        <Icon className="w-3.5 h-3.5" />
+                        <span>{s.title}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="flex items-center gap-1.5 text-[11px] text-gray-400 shrink-0 self-end sm:self-auto font-mono">
+                <RefreshCw className="w-3 h-3 text-brand-gold animate-spin-slow" />
+                <span>{lastSavedTime}</span>
+              </div>
+            </div>
+
+            <form onSubmit={handleSubmit} className="p-6 sm:p-8">
+              {errorMsg && (
+                <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 flex items-center gap-3">
+                  <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                  <span className="text-sm">{errorMsg}</span>
+                </div>
+              )}
 
             {/* STEP 1: Company & Contact */}
             {activeStep === 1 && (
@@ -398,8 +551,93 @@ export const QhaweOnboardingPage: React.FC = () => {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {/* Direct Logo Upload Component */}
+                  <div className="sm:col-span-2 p-4 rounded-xl bg-brand-black/60 border border-gray-700/80 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <label className="block text-xs font-bold text-white flex items-center gap-2">
+                        <Upload className="w-4 h-4 text-brand-gold" />
+                        Upload Brand Logo (Direct File Upload)
+                      </label>
+                      <span className="text-[10px] text-gray-400">SVG, PNG, JPG, WebP, PDF (Max 10MB)</span>
+                    </div>
+
+                    {form.logo_file ? (
+                      <div className="p-3.5 rounded-lg bg-gray-900 border border-brand-gold/40 flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-3 overflow-hidden">
+                          {form.logo_file.type?.startsWith('image/') || form.logo_file.dataUrl?.startsWith('data:image/') ? (
+                            <img
+                              src={form.logo_file.dataUrl}
+                              alt="Uploaded logo"
+                              className="w-14 h-14 object-contain rounded bg-white/10 p-1 border border-gray-700 shrink-0"
+                            />
+                          ) : (
+                            <div className="w-14 h-14 rounded bg-white/10 flex items-center justify-center shrink-0 border border-gray-700">
+                              <ImageIcon className="w-6 h-6 text-brand-gold" />
+                            </div>
+                          )}
+                          <div className="overflow-hidden">
+                            <p className="text-xs font-bold text-white truncate">{form.logo_file.name}</p>
+                            <p className="text-[11px] text-brand-gold font-mono">
+                              {(form.logo_file.size / 1024).toFixed(1)} KB &bull; Uploaded &amp; attached to specification
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => fileInputRef.current?.click()}
+                            className="px-3 py-1.5 rounded text-xs font-semibold bg-gray-800 text-gray-200 hover:text-white border border-gray-700"
+                          >
+                            Change
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleRemoveLogo}
+                            className="p-1.5 rounded text-xs text-red-400 hover:bg-red-500/20"
+                            title="Remove file"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div
+                        onClick={() => fileInputRef.current?.click()}
+                        className="border-2 border-dashed border-gray-700 hover:border-brand-gold rounded-xl p-6 text-center cursor-pointer transition bg-gray-900/40 hover:bg-gray-900/70"
+                      >
+                        <Upload className="w-8 h-8 text-brand-gold mx-auto mb-2 opacity-80" />
+                        <p className="text-xs font-bold text-white mb-0.5">
+                          Click to browse or drop your logo here
+                        </p>
+                        <p className="text-[11px] text-gray-400">
+                          Vector SVG or transparent high-res PNG recommended for crisp rendering
+                        </p>
+                      </div>
+                    )}
+
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept=".svg,.png,.jpg,.jpeg,.webp,.pdf"
+                      onChange={handleLogoFileSelect}
+                      className="hidden"
+                    />
+
+                    <div className="pt-2 border-t border-gray-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                      <span className="text-gray-400">Prefer sharing a cloud folder instead?</span>
+                      <input
+                        type="text"
+                        placeholder="Or paste Google Drive / Dropbox link here..."
+                        value={form.logo_download_link}
+                        onChange={(e) => updateField('logo_download_link', e.target.value)}
+                        className="bg-brand-black border border-gray-700 rounded-lg px-3 py-1.5 text-xs text-white focus:border-brand-gold focus:outline-none flex-1 max-w-sm"
+                      />
+                    </div>
+                  </div>
+
                   <div className="sm:col-span-2">
-                    <label className="block text-xs font-semibold text-gray-300 mb-1">Logo Format Availability</label>
+                    <label className="block text-xs font-semibold text-gray-300 mb-1">Logo Format Availability Status</label>
                     <select
                       value={form.logo_status}
                       onChange={(e) => updateField('logo_status', e.target.value)}
@@ -410,16 +648,6 @@ export const QhaweOnboardingPage: React.FC = () => {
                       <option>Please pull and optimize the logo from our live website</option>
                       <option>We need brand/logo touch-ups or refresh</option>
                     </select>
-                  </div>
-                  <div className="sm:col-span-2">
-                    <label className="block text-xs font-semibold text-gray-300 mb-1">Logo Cloud Link (Google Drive / Dropbox / WeTransfer)</label>
-                    <input
-                      type="text"
-                      placeholder="https://drive.google.com/..."
-                      value={form.logo_download_link}
-                      onChange={(e) => updateField('logo_download_link', e.target.value)}
-                      className="w-full bg-brand-black border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-white focus:border-brand-gold focus:outline-none"
-                    />
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-gray-300 mb-1">Primary Color (Navy)</label>
@@ -854,6 +1082,21 @@ export const QhaweOnboardingPage: React.FC = () => {
                     <span className="text-gray-400">Target Subdomain:</span>
                     <span className="text-white font-mono">{form.desired_subdomain}</span>
                   </div>
+                  <div className="flex justify-between border-b border-gray-800 pb-2">
+                    <span className="text-gray-400">Brand Logo:</span>
+                    <span className="text-white font-medium flex items-center gap-1.5">
+                      {form.logo_file ? (
+                        <>
+                          <Check className="w-3.5 h-3.5 text-emerald-400" />
+                          <span className="text-emerald-400">{form.logo_file.name} ({(form.logo_file.size / 1024).toFixed(1)} KB)</span>
+                        </>
+                      ) : form.logo_download_link ? (
+                        <span className="text-brand-gold truncate max-w-xs">{form.logo_download_link}</span>
+                      ) : (
+                        <span className="text-gray-400">{form.logo_status}</span>
+                      )}
+                    </span>
+                  </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">SMS Sender ID:</span>
                     <span className="text-white font-mono">{form.sms_sender_id}</span>
@@ -899,10 +1142,18 @@ export const QhaweOnboardingPage: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-6 py-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-white text-xs font-bold flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition disabled:opacity-50"
+                  className={`px-6 py-3 rounded-lg text-white text-xs font-bold flex items-center gap-2 shadow-lg transition disabled:opacity-50 ${
+                    isEditing && submittedRef
+                      ? 'bg-blue-600 hover:bg-blue-500 shadow-blue-600/30'
+                      : 'bg-emerald-500 hover:bg-emerald-400 shadow-emerald-500/20'
+                  }`}
                 >
                   {isSubmitting ? (
                     'Recording Specifications...'
+                  ) : isEditing && submittedRef ? (
+                    <>
+                      <CheckCircle2 className="w-4 h-4" /> Save &amp; Update Changes (Sync to Admin)
+                    </>
                   ) : (
                     <>
                       <Send className="w-4 h-4" /> Submit Specifications to S&S Tech Group
@@ -913,6 +1164,7 @@ export const QhaweOnboardingPage: React.FC = () => {
             </div>
           </form>
         </div>
+      </div>
       )}
     </div>
   );

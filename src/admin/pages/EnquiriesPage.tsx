@@ -233,13 +233,24 @@ export const EnquiriesPage: React.FC = () => {
               </p>
             </div>
 
-            <div className="pt-2 flex items-center justify-between">
-              <a
-                href={`mailto:${selectedEnquiry.email}?subject=S%26S%20Tech%20Group%20%E2%80%94%20Project%20Enquiry`}
-                className="inline-flex items-center text-xs font-semibold px-4 py-2 rounded-lg bg-brand-gold text-brand-black hover:bg-brand-gold-light"
-              >
-                <Mail className="w-3.5 h-3.5 mr-1.5" /> Reply by Email
-              </a>
+            <div className="pt-2 flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <a
+                  href={`mailto:${selectedEnquiry.email}?subject=S%26S%20Tech%20Group%20%E2%80%94%20Project%20Enquiry`}
+                  className="inline-flex items-center text-xs font-semibold px-4 py-2 rounded-lg bg-brand-gold text-brand-black hover:bg-brand-gold-light"
+                >
+                  <Mail className="w-3.5 h-3.5 mr-1.5" /> Reply by Email
+                </a>
+
+                {selectedEnquiry.project_description?.includes('SPEC-') && (
+                  <a
+                    href="/admin/onboarding"
+                    className="inline-flex items-center text-xs font-semibold px-3.5 py-2 rounded-lg bg-blue-600/20 text-blue-300 border border-blue-500/30 hover:bg-blue-600/40 transition"
+                  >
+                    <Eye className="w-3.5 h-3.5 mr-1.5" /> View Onboarding Specs &amp; Logo
+                  </a>
+                )}
+              </div>
 
               <button
                 type="button"

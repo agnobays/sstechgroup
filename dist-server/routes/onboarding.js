@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { db } from '../db/database.js';
 const router = Router();
-// Ensure onboarding_submissions table exists
+// Ensure onboarding_submissions table exists with revision support
 try {
     db.exec(`
     CREATE TABLE IF NOT EXISTS onboarding_submissions (
@@ -15,10 +15,16 @@ try {
       reference_number TEXT UNIQUE NOT NULL,
       submission_data TEXT NOT NULL,
       status TEXT NOT NULL DEFAULT 'Submitted',
+      revision_count INTEGER DEFAULT 1,
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
       updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
   `);
+    // Safely ensure revision_count column exists for existing tables
+    try {
+        db.exec(`ALTER TABLE onboarding_submissions ADD COLUMN revision_count INTEGER DEFAULT 1;`);
+    }
+    catch { }
 }
 catch (err) {
     console.error('Failed to ensure onboarding_submissions table:', err);
@@ -31,7 +37,29 @@ const submissionSchema = z.object({
     phone: z.string().optional().default(''),
     data: z.record(z.any()),
 });
-// POST /api/onboarding
+// GET /api/onboarding (Admin: List all onboarding submissions)
+router.get('/', (req, res) => {
+    try {
+        const rows = db.prepare(`
+      SELECT id, client_slug, organization, contact_name, email, phone, reference_number, submission_data, status, revision_count, created_at, updated_at
+      FROM onboarding_submissions
+      ORDER BY updated_at DESC, created_at DESC
+    `).all();
+        const submissions = rows.map((row) => ({
+            ...row,
+            data: JSON.parse(row.submission_data || '{}'),
+        }));
+        res.json({
+            success: true,
+            submissions,
+        });
+    }
+    catch (err) {
+        console.error('Failed to list onboarding submissions:', err);
+        res.status(500).json({ success: false, error: 'Failed to retrieve onboarding submissions' });
+    }
+});
+// POST /api/onboarding (Initial client submission)
 router.post('/', (req, res) => {
     const result = submissionSchema.safeParse(req.body);
     if (!result.success) {
@@ -49,8 +77,8 @@ router.post('/', (req, res) => {
         // 1. Insert into onboarding_submissions
         db.prepare(`
       INSERT INTO onboarding_submissions (
-        client_slug, organization, contact_name, email, phone, reference_number, submission_data
-      ) VALUES (?, ?, ?, ?, ?, ?, ?)
+        client_slug, organization, contact_name, email, phone, reference_number, submission_data, status, revision_count, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, 'Submitted', 1, CURRENT_TIMESTAMP)
     `).run(client_slug, organization, contact_name, email, phone, refNumber, JSON.stringify(data));
         // 2. Also register in enquiries table so it surfaces in admin dashboard
         try {
@@ -77,11 +105,90 @@ router.post('/', (req, res) => {
         });
     }
 });
+// PUT /api/onboarding/:refNumber (Client makes changes / updates their submitted specifications)
+router.put('/:refNumber', (req, res) => {
+    const refNumber = req.params.refNumber;
+    const result = submissionSchema.safeParse(req.body);
+    if (!result.success) {
+        res.status(400).json({
+            success: false,
+            error: result.error.errors[0]?.message || 'Invalid submission data',
+        });
+        return;
+    }
+    const { organization, contact_name, email, phone, data } = result.data;
+    try {
+        const existing = db.prepare(`
+      SELECT id, revision_count FROM onboarding_submissions WHERE reference_number = ?
+    `).get(refNumber);
+        if (!existing) {
+            res.status(404).json({ success: false, error: 'Submission not found to update' });
+            return;
+        }
+        const nextRev = (existing.revision_count || 1) + 1;
+        db.prepare(`
+      UPDATE onboarding_submissions
+      SET organization = ?,
+          contact_name = ?,
+          email = ?,
+          phone = ?,
+          submission_data = ?,
+          status = 'Updated',
+          revision_count = ?,
+          updated_at = CURRENT_TIMESTAMP
+      WHERE reference_number = ?
+    `).run(organization, contact_name, email, phone, JSON.stringify(data), nextRev, refNumber);
+        // Also update project_description note in enquiries
+        try {
+            db.prepare(`
+        UPDATE enquiries
+        SET project_description = project_description || ?
+        WHERE project_description LIKE ?
+      `).run(`\n[Updated v${nextRev} on ${new Date().toLocaleString('en-ZA')}]: Client revised specifications & brand assets.`, `%${refNumber}%`);
+        }
+        catch (e) {
+            console.warn('Notice: Enquiry description update skipped:', e);
+        }
+        res.json({
+            success: true,
+            message: `Specifications successfully updated (Revision v${nextRev}). Changes are now live on the Admin Dashboard.`,
+            referenceNumber: refNumber,
+            revision: nextRev,
+            updatedAt: new Date().toISOString(),
+        });
+    }
+    catch (err) {
+        console.error('Failed to update onboarding submission:', err);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to update specifications. Please try again.',
+        });
+    }
+});
+// PATCH /api/onboarding/:refNumber/status (Admin updates status: 'Reviewing', 'Approved', 'Converted', etc.)
+router.patch('/:refNumber/status', (req, res) => {
+    const { status } = req.body;
+    if (!status) {
+        res.status(400).json({ success: false, error: 'Status is required' });
+        return;
+    }
+    try {
+        db.prepare(`
+      UPDATE onboarding_submissions
+      SET status = ?, updated_at = CURRENT_TIMESTAMP
+      WHERE reference_number = ?
+    `).run(status, req.params.refNumber);
+        res.json({ success: true, message: `Status updated to ${status}` });
+    }
+    catch (err) {
+        res.status(500).json({ success: false, error: 'Failed to update status' });
+    }
+});
 // GET /api/onboarding/:refNumber (Fetch submission summary by ref)
 router.get('/:refNumber', (req, res) => {
     try {
         const row = db.prepare(`
-      SELECT id, client_slug, organization, contact_name, email, phone, reference_number, submission_data, status, created_at
+      SELECT id, client_slug, organization, contact_name, email, phone, reference_number, submission_data, status, revision_count, created_at, updated_at
       FROM onboarding_submissions
       WHERE reference_number = ?
     `).get(req.params.refNumber);

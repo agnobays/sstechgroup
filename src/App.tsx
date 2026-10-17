@@ -30,6 +30,7 @@ import { PricingCataloguePage } from './admin/pages/PricingCataloguePage';
 import { SettingsPage } from './admin/pages/SettingsPage';
 import { AuditLogsPage } from './admin/pages/AuditLogsPage';
 import { EnquiriesPage } from './admin/pages/EnquiriesPage';
+import { OnboardingSubmissionsPage } from './admin/pages/OnboardingSubmissionsPage';
 import { TeamManagementPage } from './admin/pages/TeamManagementPage';
 import { EmailVaultPage } from './admin/pages/EmailVaultPage';
 import { WhatsAppButton } from './components/WhatsAppButton';
@@ -233,6 +234,7 @@ export const App: React.FC = () => {
         <Route path="emails" element={<EmailVaultPage />} />
         <Route path="pricing" element={<PricingCataloguePage />} />
         <Route path="clients" element={<ClientsPage />} />
+        <Route path="onboarding" element={<OnboardingSubmissionsPage />} />
         <Route path="enquiries" element={<EnquiriesPage />} />
         <Route path="audit-logs" element={<AuditLogsPage />} />
         <Route path="settings" element={<SettingsPage />} />
