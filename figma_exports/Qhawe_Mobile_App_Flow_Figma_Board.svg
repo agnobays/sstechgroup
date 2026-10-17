@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2300 960" width="2300" height="960">
+  <defs>
+    <linearGradient id="boardM" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#020810"/>
+      <stop offset="100%" stop-color="#061524"/>
+    </linearGradient>
+    <filter id="mShadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <rect width="2300" height="960" fill="url(#boardM)"/>
+
+  <!-- Master Title -->
+  <g transform="translate(50, 36)">
+    <text x="0" y="25" font-family="DM Serif Display, Georgia, serif" font-size="28" font-weight="bold" fill="#D97706">Qhawe Credit Solutions — Native Mobile PWA / App Architecture (LendPlus Style)</text>
+    <text x="0" y="48" font-family="Plus Jakarta Sans, sans-serif" font-size="13" fill="#94A3B8">Passwordless Login via SA ID + SMS OTP &bull; Auto-Profile Creation &bull; Capped at R5,000 &bull; 1-Click Repeat Reloans</text>
+  </g>
+
+  <!-- Screen 1: App Home -->
+  <g transform="translate(50, 75)" filter="url(#mShadow)">
+    <text x="0" y="-10" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="bold" fill="#D97706">SCREEN 1: APP HOME &amp; R5K SLIDER</text>
+    <image href="Mobile_Screen_1_App_Home_Slider.svg" width="390" height="844"/>
+  </g>
+
+  <!-- Screen 2: Passwordless Login -->
+  <g transform="translate(490, 75)" filter="url(#mShadow)">
+    <text x="0" y="-10" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="bold" fill="#D97706">SCREEN 2: ID + OTP PASSWORDLESS LOGIN</text>
+    <image href="Mobile_Screen_2_Passwordless_Login_OTP.svg" width="390" height="844"/>
+  </g>
+
+  <!-- Screen 3: Auto-Profile KYC -->
+  <g transform="translate(930, 75)" filter="url(#mShadow)">
+    <text x="0" y="-10" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="bold" fill="#D97706">SCREEN 3: INSTANT PROFILE SETUP</text>
+    <image href="Mobile_Screen_3_Instant_KYC_AutoProfile.svg" width="390" height="844"/>
+  </g>
+
+  <!-- Screen 4: Bank & DebiCheck -->
+  <g transform="translate(1370, 75)" filter="url(#mShadow)">
+    <text x="0" y="-10" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="bold" fill="#D97706">SCREEN 4: OPEN BANKING &amp; DEBICHECK</text>
+    <image href="Mobile_Screen_4_Bank_DebiCheck_Sheet.svg" width="390" height="844"/>
+  </g>
+
+  <!-- Screen 5: Borrower Dashboard -->
+  <g transform="translate(1810, 75)" filter="url(#mShadow)">
+    <text x="0" y="-10" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="bold" fill="#10B981">SCREEN 5: BORROWER DASHBOARD &amp; RELOAN</text>
+    <image href="Mobile_Screen_5_Borrower_Portal_Dashboard.svg" width="390" height="844"/>
+  </g>
+</svg>

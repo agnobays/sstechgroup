@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 844" width="390" height="844">
+  <defs>
+    <linearGradient id="mBg1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#05121F"/>
+      <stop offset="100%" stop-color="#0A2540"/>
+    </linearGradient>
+    <linearGradient id="gold1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#D97706"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="390" height="844" rx="44" fill="url(#mBg1)"/>
+  <rect width="390" height="844" rx="44" fill="none" stroke="#1E3A5F" stroke-width="3"/>
+
+  
+      <!-- Status Bar -->
+      <g transform="translate(0, 0)">
+        <text x="32" y="32" font-family="Plus Jakarta Sans, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF">9:41</text>
+        <g transform="translate(325, 20)">
+          <!-- Signal -->
+          <rect x="0" y="8" width="3" height="4" rx="1" fill="#FFFFFF"/>
+          <rect x="5" y="6" width="3" height="6" rx="1" fill="#FFFFFF"/>
+          <rect x="10" y="3" width="3" height="9" rx="1" fill="#FFFFFF"/>
+          <rect x="15" y="0" width="3" height="12" rx="1" fill="#FFFFFF"/>
+          <!-- Battery -->
+          <rect x="25" y="1" width="22" height="11" rx="3" fill="none" stroke="#FFFFFF" stroke-width="1.5"/>
+          <rect x="27" y="3" width="14" height="7" rx="1.5" fill="#FFFFFF"/>
+          <path d="M48 4v5" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
+        </g>
+      </g>
+    
+
+  <!-- App Header -->
+  <g transform="translate(20, 52)">
+    <rect x="0" y="0" width="36" height="36" rx="9" fill="url(#gold1)"/>
+    <text x="18" y="25" font-family="DM Serif Display, Georgia, serif" font-size="20" font-weight="bold" fill="#0A2540" text-anchor="middle">Q</text>
+    <text x="46" y="20" font-family="Plus Jakarta Sans, sans-serif" font-size="15" font-weight="800" fill="#FFFFFF">QHAWE</text>
+    <text x="46" y="32" font-family="Plus Jakarta Sans, sans-serif" font-size="9" font-weight="700" fill="#D97706" letter-spacing="1">CREDIT SOLUTIONS</text>
+
+    <!-- Sign In Button for Returning Borrowers -->
+    <rect x="265" y="3" width="85" height="30" rx="15" fill="#05101A" stroke="#D97706" stroke-width="1"/>
+    <text x="307" y="22" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="bold" fill="#D97706" text-anchor="middle">Sign In &rarr;</text>
+  </g>
+
+  <!-- Hero Greeting -->
+  <g transform="translate(20, 105)">
+    <text x="0" y="16" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="600" fill="#D97706">INSTANT ONLINE LOANS</text>
+    <text x="0" y="42" font-family="DM Serif Display, Georgia, serif" font-size="26" font-weight="bold" fill="#FFFFFF">Fast cash in 15 mins</text>
+    <text x="0" y="60" font-family="Plus Jakarta Sans, sans-serif" font-size="11" fill="#94A3B8">Capped at R5,000 for your protection &bull; NCR Registered</text>
+  </g>
+
+  <!-- Slider Card -->
+  <g transform="translate(20, 185)">
+    <rect width="350" height="420" rx="20" fill="#061524" stroke="#1E3A5F" stroke-width="1.5"/>
+
+    <g transform="translate(20, 24)">
+      <text x="0" y="14" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="700" fill="#94A3B8" letter-spacing="1">CHOOSE AMOUNT</text>
+      <text x="310" y="18" font-family="JetBrains Mono, monospace" font-size="30" font-weight="bold" fill="#D97706" text-anchor="end">R 2,500</text>
+
+      <!-- Slider Track -->
+      <rect x="0" y="44" width="310" height="10" rx="5" fill="#1E293B"/>
+      <rect x="0" y="44" width="138" height="10" rx="5" fill="url(#gold1)"/>
+      <circle cx="138" cy="49" r="14" fill="#FFFFFF" stroke="#D97706" stroke-width="3.5"/>
+
+      <text x="0" y="74" font-family="JetBrains Mono, monospace" font-size="10" fill="#64748B">R500</text>
+      <text x="138" y="74" font-family="JetBrains Mono, monospace" font-size="10" font-weight="bold" fill="#D97706" text-anchor="middle">R2,500 (1st loan)</text>
+      <text x="310" y="74" font-family="JetBrains Mono, monospace" font-size="10" fill="#64748B" text-anchor="end">R5,000</text>
+
+      <!-- Terms Selector -->
+      <text x="0" y="110" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="700" fill="#94A3B8" letter-spacing="1">REPAYMENT TERM</text>
+
+      <g transform="translate(0, 124)">
+        <rect width="96" height="44" rx="10" fill="#0F2F50" stroke="#D97706" stroke-width="1.5"/>
+        <text x="48" y="22" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="bold" fill="#D97706" text-anchor="middle">1 Month</text>
+        <text x="48" y="36" font-family="Plus Jakarta Sans, sans-serif" font-size="9" fill="#94A3B8" text-anchor="middle">30 Days</text>
+
+        <rect x="106" y="0" width="96" height="44" rx="10" fill="#0A2540" stroke="#1E3A5F" stroke-width="1"/>
+        <text x="154" y="22" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="600" fill="#FFFFFF" text-anchor="middle">2 Months</text>
+        <text x="154" y="36" font-family="Plus Jakarta Sans, sans-serif" font-size="9" fill="#64748B" text-anchor="middle">60 Days</text>
+
+        <rect x="214" y="0" width="96" height="44" rx="10" fill="#0A2540" stroke="#1E3A5F" stroke-width="1"/>
+        <text x="262" y="22" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="600" fill="#FFFFFF" text-anchor="middle">3 Months</text>
+        <text x="262" y="36" font-family="Plus Jakarta Sans, sans-serif" font-size="9" fill="#64748B" text-anchor="middle">90 Days</text>
+      </g>
+
+      <!-- Mini Breakdown Table -->
+      <g transform="translate(0, 190)">
+        <rect width="310" height="110" rx="12" fill="#0A2540" stroke="#1E3A5F" stroke-width="1"/>
+        <g transform="translate(14, 18)">
+          <text x="0" y="12" font-family="Plus Jakarta Sans, sans-serif" font-size="11" fill="#94A3B8">Initiation Fee (NCA):</text>
+          <text x="282" y="12" font-family="JetBrains Mono, monospace" font-size="11" font-weight="bold" fill="#FFFFFF" text-anchor="end">R 315.00</text>
+
+          <text x="0" y="36" font-family="Plus Jakarta Sans, sans-serif" font-size="11" fill="#94A3B8">Monthly Service &amp; Int:</text>
+          <text x="282" y="36" font-family="JetBrains Mono, monospace" font-size="11" font-weight="bold" fill="#FFFFFF" text-anchor="end">R 194.00</text>
+
+          <line x1="0" y1="50" x2="282" y2="50" stroke="#1E3A5F" stroke-width="1"/>
+
+          <text x="0" y="70" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="bold" fill="#FFFFFF">Total Repayable:</text>
+          <text x="282" y="70" font-family="JetBrains Mono, monospace" font-size="16" font-weight="bold" fill="#D97706" text-anchor="end">R 3,037.50</text>
+        </g>
+      </g>
+
+      <!-- Native Call to Action -->
+      <g transform="translate(0, 324)">
+        <rect width="310" height="52" rx="14" fill="url(#gold1)"/>
+        <text x="155" y="31" font-family="Plus Jakarta Sans, sans-serif" font-size="14" font-weight="800" fill="#0A2540" text-anchor="middle">APPLY FOR R 2,500 NOW &rarr;</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Floating Trust Badges -->
+  <g transform="translate(20, 625)">
+    <rect width="350" height="42" rx="12" fill="#061524" stroke="#1E3A5F" stroke-width="1"/>
+    <text x="175" y="25" font-family="Plus Jakarta Sans, sans-serif" font-size="10" font-weight="600" fill="#10B981" text-anchor="middle">&check; No Paperwork &bull; Instant DebiCheck &bull; Real-Time Payout</text>
+  </g>
+
+  
+      <!-- Bottom Navigation Bar -->
+      <g transform="translate(0, 764)">
+        <rect width="390" height="80" fill="#0A2540" stroke="#1E3A5F" stroke-width="1"/>
+        
+        <!-- Home (Active) -->
+        <g transform="translate(48, 16)">
+          <circle cx="12" cy="12" r="12" fill="#D97706" fill-opacity="0.2"/>
+          <path d="M6 14L12 8L18 14V19H6V14Z" fill="#D97706"/>
+          <text x="12" y="32" font-family="Plus Jakarta Sans, sans-serif" font-size="10" font-weight="700" fill="#D97706" text-anchor="middle">Loans</text>
+        </g>
+
+        <!-- Status -->
+        <g transform="translate(138, 16)">
+          <rect x="4" y="4" width="16" height="16" rx="4" fill="none" stroke="#94A3B8" stroke-width="1.5"/>
+          <path d="M8 12L11 15L16 9" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round"/>
+          <text x="12" y="32" font-family="Plus Jakarta Sans, sans-serif" font-size="10" font-weight="500" fill="#94A3B8" text-anchor="middle">Status</text>
+        </g>
+
+        <!-- Support WhatsApp -->
+        <g transform="translate(228, 16)">
+          <circle cx="12" cy="12" r="8" fill="none" stroke="#94A3B8" stroke-width="1.5"/>
+          <path d="M12 9V13H15" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round"/>
+          <text x="12" y="32" font-family="Plus Jakarta Sans, sans-serif" font-size="10" font-weight="500" fill="#94A3B8" text-anchor="middle">Support</text>
+        </g>
+
+        <!-- Profile -->
+        <g transform="translate(318, 16)">
+          <circle cx="12" cy="8" r="5" fill="none" stroke="#94A3B8" stroke-width="1.5"/>
+          <path d="M5 20C5 17 8 15 12 15C16 15 19 17 19 20" stroke="#94A3B8" stroke-width="1.5"/>
+          <text x="12" y="32" font-family="Plus Jakarta Sans, sans-serif" font-size="10" font-weight="500" fill="#94A3B8" text-anchor="middle">Profile</text>
+        </g>
+
+        <!-- Home Bar Indicator -->
+        <rect x="135" y="68" width="120" height="4" rx="2" fill="#FFFFFF" fill-opacity="0.3"/>
+      </g>
+    
+</svg>

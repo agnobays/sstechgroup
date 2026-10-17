@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 844" width="390" height="844">
+  <defs>
+    <linearGradient id="mBg5" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#05121F"/>
+      <stop offset="100%" stop-color="#0A2540"/>
+    </linearGradient>
+    <linearGradient id="gold5" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#D97706"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+    <linearGradient id="emGrad5" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#059669"/>
+      <stop offset="100%" stop-color="#10B981"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="390" height="844" rx="44" fill="url(#mBg5)"/>
+  <rect width="390" height="844" rx="44" fill="none" stroke="#1E3A5F" stroke-width="3"/>
+
+  
+      <!-- Status Bar -->
+      <g transform="translate(0, 0)">
+        <text x="32" y="32" font-family="Plus Jakarta Sans, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF">9:41</text>
+        <g transform="translate(325, 20)">
+          <!-- Signal -->
+          <rect x="0" y="8" width="3" height="4" rx="1" fill="#FFFFFF"/>
+          <rect x="5" y="6" width="3" height="6" rx="1" fill="#FFFFFF"/>
+          <rect x="10" y="3" width="3" height="9" rx="1" fill="#FFFFFF"/>
+          <rect x="15" y="0" width="3" height="12" rx="1" fill="#FFFFFF"/>
+          <!-- Battery -->
+          <rect x="25" y="1" width="22" height="11" rx="3" fill="none" stroke="#FFFFFF" stroke-width="1.5"/>
+          <rect x="27" y="3" width="14" height="7" rx="1.5" fill="#FFFFFF"/>
+          <path d="M48 4v5" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
+        </g>
+      </g>
+    
+
+  <!-- Portal Header -->
+  <g transform="translate(20, 52)">
+    <rect x="0" y="0" width="36" height="36" rx="9" fill="url(#gold5)"/>
+    <text x="18" y="25" font-family="DM Serif Display, Georgia, serif" font-size="20" font-weight="bold" fill="#0A2540" text-anchor="middle">Q</text>
+    <text x="46" y="20" font-family="Plus Jakarta Sans, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">Hello, Sindiwe</text>
+    <text x="46" y="32" font-family="Plus Jakarta Sans, sans-serif" font-size="9" font-weight="600" fill="#10B981">Verified Borrower &bull; Good Standing</text>
+
+    <!-- Logout button -->
+    <rect x="285" y="3" width="65" height="30" rx="15" fill="#05101A" stroke="#1E3A5F" stroke-width="1"/>
+    <text x="317" y="22" font-family="Plus Jakarta Sans, sans-serif" font-size="10" font-weight="600" fill="#94A3B8" text-anchor="middle">Sign Out</text>
+  </g>
+
+  <!-- Active Loan Card -->
+  <g transform="translate(20, 110)">
+    <rect width="350" height="230" rx="20" fill="#061524" stroke="#1E3A5F" stroke-width="1.5"/>
+
+    <g transform="translate(20, 24)">
+      <div class="flex">
+        <text x="0" y="14" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="700" fill="#D97706" letter-spacing="1">CURRENT ACTIVE LOAN</text>
+        <rect x="210" y="0" width="100" height="22" rx="6" fill="#10B981" fill-opacity="0.15" stroke="#10B981" stroke-width="1"/>
+        <text x="260" y="15" font-family="Plus Jakarta Sans, sans-serif" font-size="10" font-weight="bold" fill="#10B981" text-anchor="middle">Disbursed (RTC)</text>
+      </div>
+
+      <text x="0" y="58" font-family="JetBrains Mono, monospace" font-size="34" font-weight="bold" fill="#FFFFFF">R 2,500.00</text>
+      
+      <!-- Progress Bar (18 Days Left) -->
+      <g transform="translate(0, 80)">
+        <text x="0" y="10" font-family="Plus Jakarta Sans, sans-serif" font-size="11" fill="#94A3B8">Due Date: 25 Nov 2026 (18 Days Left)</text>
+        <text x="310" y="10" font-family="JetBrains Mono, monospace" font-size="11" font-weight="bold" fill="#D97706" text-anchor="end">R 3,037.50</text>
+
+        <rect x="0" y="20" width="310" height="8" rx="4" fill="#1E293B"/>
+        <rect x="0" y="20" width="124" height="8" rx="4" fill="#10B981"/>
+      </g>
+
+      <g transform="translate(0, 140)">
+        <rect width="145" height="42" rx="10" fill="#0A2540" stroke="#1E3A5F" stroke-width="1"/>
+        <text x="72" y="26" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="bold" fill="#FFFFFF" text-anchor="middle">Pay Early (Save R)</text>
+
+        <rect x="160" y="0" width="150" height="42" rx="10" fill="#0A2540" stroke="#1E3A5F" stroke-width="1"/>
+        <text x="235" y="26" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="bold" fill="#D97706" text-anchor="middle">DebiCheck Active &check;</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- 1-Click Repeat Loan Banner (Key feature of LendPlus!) -->
+  <g transform="translate(20, 360)">
+    <rect width="350" height="210" rx="20" fill="#0F2F50" stroke="#D97706" stroke-width="1.5"/>
+
+    <g transform="translate(20, 24)">
+      <rect width="110" height="22" rx="6" fill="#D97706" fill-opacity="0.2"/>
+      <text x="55" y="15" font-family="Plus Jakarta Sans, sans-serif" font-size="10" font-weight="bold" fill="#D97706" text-anchor="middle">REPEAT BORROWER</text>
+
+      <text x="0" y="52" font-family="DM Serif Display, Georgia, serif" font-size="22" font-weight="bold" fill="#FFFFFF">1-Click Instant Reloan</text>
+      <text x="0" y="74" font-family="Plus Jakarta Sans, sans-serif" font-size="11" fill="#94A3B8">Because your Capitec bank and ID are already verified, borrow up to <strong class="text-white">R5,000</strong> instantly with no new forms.</text>
+
+      <!-- Amount Selector for Repeat Loan -->
+      <g transform="translate(0, 95)">
+        <rect width="310" height="44" rx="10" fill="#061524" stroke="#1E3A5F" stroke-width="1"/>
+        <text x="14" y="27" font-family="Plus Jakarta Sans, sans-serif" font-size="12" fill="#94A3B8">Select Loan: </text>
+        <text x="95" y="27" font-family="JetBrains Mono, monospace" font-size="13" font-weight="bold" fill="#D97706">R 5,000.00 (Max Limit)</text>
+      </g>
+
+      <g transform="translate(0, 150)">
+        <rect width="310" height="44" rx="12" fill="url(#gold5)"/>
+        <text x="155" y="27" font-family="Plus Jakarta Sans, sans-serif" font-size="13" font-weight="800" fill="#0A2540" text-anchor="middle">DISBURSE R 5,000 IN 60 SECS &rarr;</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Credit Rating Score Card -->
+  <g transform="translate(20, 590)">
+    <rect width="350" height="85" rx="16" fill="#061524" stroke="#1E3A5F" stroke-width="1"/>
+    <g transform="translate(20, 24)">
+      <circle cx="20" cy="18" r="16" fill="#10B981" fill-opacity="0.2"/>
+      <text x="20" y="23" font-family="JetBrains Mono, monospace" font-size="12" font-weight="bold" fill="#10B981" text-anchor="middle">A+</text>
+      <text x="50" y="16" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="bold" fill="#FFFFFF">Qhawe Credit Rating: Excellent</text>
+      <text x="50" y="32" font-family="Plus Jakarta Sans, sans-serif" font-size="10" fill="#94A3B8">Eligible for repeat tier upgrades up to R15,000.</text>
+    </g>
+  </g>
+
+  
+      <!-- Bottom Navigation Bar -->
+      <g transform="translate(0, 764)">
+        <rect width="390" height="80" fill="#0A2540" stroke="#1E3A5F" stroke-width="1"/>
+        
+        <!-- Home (Active) -->
+        <g transform="translate(48, 16)">
+          <circle cx="12" cy="12" r="12" fill="#D97706" fill-opacity="0.2"/>
+          <path d="M6 14L12 8L18 14V19H6V14Z" fill="#D97706"/>
+          <text x="12" y="32" font-family="Plus Jakarta Sans, sans-serif" font-size="10" font-weight="700" fill="#D97706" text-anchor="middle">Loans</text>
+        </g>
+
+        <!-- Status -->
+        <g transform="translate(138, 16)">
+          <rect x="4" y="4" width="16" height="16" rx="4" fill="none" stroke="#94A3B8" stroke-width="1.5"/>
+          <path d="M8 12L11 15L16 9" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round"/>
+          <text x="12" y="32" font-family="Plus Jakarta Sans, sans-serif" font-size="10" font-weight="500" fill="#94A3B8" text-anchor="middle">Status</text>
+        </g>
+
+        <!-- Support WhatsApp -->
+        <g transform="translate(228, 16)">
+          <circle cx="12" cy="12" r="8" fill="none" stroke="#94A3B8" stroke-width="1.5"/>
+          <path d="M12 9V13H15" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round"/>
+          <text x="12" y="32" font-family="Plus Jakarta Sans, sans-serif" font-size="10" font-weight="500" fill="#94A3B8" text-anchor="middle">Support</text>
+        </g>
+
+        <!-- Profile -->
+        <g transform="translate(318, 16)">
+          <circle cx="12" cy="8" r="5" fill="none" stroke="#94A3B8" stroke-width="1.5"/>
+          <path d="M5 20C5 17 8 15 12 15C16 15 19 17 19 20" stroke="#94A3B8" stroke-width="1.5"/>
+          <text x="12" y="32" font-family="Plus Jakarta Sans, sans-serif" font-size="10" font-weight="500" fill="#94A3B8" text-anchor="middle">Profile</text>
+        </g>
+
+        <!-- Home Bar Indicator -->
+        <rect x="135" y="68" width="120" height="4" rx="2" fill="#FFFFFF" fill-opacity="0.3"/>
+      </g>
+    
+</svg>
