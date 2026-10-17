@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 5400 980" width="5400" height="980">
+  <defs>
+    <linearGradient id="boardBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#020810"/>
+      <stop offset="100%" stop-color="#061524"/>
+    </linearGradient>
+    <filter id="shadowBig" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="16" stdDeviation="24" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <rect width="5400" height="980" fill="url(#boardBg)"/>
+
+  <!-- Master Title -->
+  <g transform="translate(60, 40)">
+    <text x="0" y="30" font-family="DM Serif Display, Georgia, serif" font-size="34" font-weight="bold" fill="#D97706">Qhawe Credit Solutions — 15-Minute Micro-Lending Flow Architecture</text>
+    <text x="0" y="55" font-family="Plus Jakarta Sans, sans-serif" font-size="14" fill="#94A3B8">Reference Model: LendPlus South Africa &bull; Brand Identity: Qhawe Navy (#0A2540) &amp; Gold (#D97706) &bull; Phase 1 Cap: R5,000</text>
+  </g>
+
+  <!-- Screen 1 Embed -->
+  <g transform="translate(60, 80)" filter="url(#shadowBig)">
+    <text x="0" y="-12" font-family="Plus Jakarta Sans, sans-serif" font-size="14" font-weight="bold" fill="#D97706">SCREEN 1: HERO &amp; DYNAMIC LOAN CALCULATOR (SLIDER UP TO R5K)</text>
+    <image href="Screen_1_Hero_Loan_Slider.svg" width="1240" height="852"/>
+  </g>
+
+  <!-- Flow Connector 1 -> 2 -->
+  <g transform="translate(1315, 480)">
+    <line x1="0" y1="0" x2="65" y2="0" stroke="#D97706" stroke-width="4" stroke-dasharray="6 4"/>
+    <polygon points="65,-8 80,0 65,8" fill="#D97706"/>
+  </g>
+
+  <!-- Screen 2 Embed -->
+  <g transform="translate(1410, 80)" filter="url(#shadowBig)">
+    <text x="0" y="-12" font-family="Plus Jakarta Sans, sans-serif" font-size="14" font-weight="bold" fill="#D97706">SCREEN 2: 13-DIGIT SA ID &amp; INCOME PRE-SCREENING</text>
+    <image href="Screen_2_Identity_KYC.svg" width="1240" height="852"/>
+  </g>
+
+  <!-- Flow Connector 2 -> 3 -->
+  <g transform="translate(2665, 480)">
+    <line x1="0" y1="0" x2="65" y2="0" stroke="#D97706" stroke-width="4" stroke-dasharray="6 4"/>
+    <polygon points="65,-8 80,0 65,8" fill="#D97706"/>
+  </g>
+
+  <!-- Screen 3 Embed -->
+  <g transform="translate(2760, 80)" filter="url(#shadowBig)">
+    <text x="0" y="-12" font-family="Plus Jakarta Sans, sans-serif" font-size="14" font-weight="bold" fill="#D97706">SCREEN 3: OPEN BANKING &amp; BUREAU AFFORDABILITY (STITCH/TRUID)</text>
+    <image href="Screen_3_Bank_Verification.svg" width="1240" height="852"/>
+  </g>
+
+  <!-- Flow Connector 3 -> 4 -->
+  <g transform="translate(4015, 480)">
+    <line x1="0" y1="0" x2="65" y2="0" stroke="#D97706" stroke-width="4" stroke-dasharray="6 4"/>
+    <polygon points="65,-8 80,0 65,8" fill="#D97706"/>
+  </g>
+
+  <!-- Screen 4 Embed -->
+  <g transform="translate(4110, 80)" filter="url(#shadowBig)">
+    <text x="0" y="-12" font-family="Plus Jakarta Sans, sans-serif" font-size="14" font-weight="bold" fill="#10B981">SCREEN 4: APPROVAL DECISION, DEBICHECK MANDATE &amp; RTC PAYOUT</text>
+    <image href="Screen_4_DebiCheck_RTC_Payout.svg" width="1240" height="852"/>
+  </g>
+</svg>

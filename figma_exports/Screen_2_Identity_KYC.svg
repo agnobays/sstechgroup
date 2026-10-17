@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 880" width="1280" height="880">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#05121F"/>
+      <stop offset="100%" stop-color="#0A2540"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#D97706"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <rect width="1280" height="880" fill="url(#bgGrad)"/>
+
+  <!-- Top Nav Header -->
+  <g transform="translate(60, 40)">
+    <rect width="1160" height="76" rx="16" fill="#0A2540" stroke="#1E3A5F" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="20" y="16" width="44" height="44" rx="10" fill="url(#goldGrad)"/>
+    <text x="42" y="47" font-family="DM Serif Display, Georgia, serif" font-size="26" font-weight="bold" fill="#0A2540" text-anchor="middle">Q</text>
+    <text x="76" y="38" font-family="Plus Jakarta Sans, sans-serif" font-size="18" font-weight="800" fill="#FFFFFF" letter-spacing="1">QHAWE</text>
+    <text x="156" y="38" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="700" fill="#D97706" letter-spacing="2">CREDIT SOLUTIONS</text>
+    <text x="76" y="54" font-family="Plus Jakarta Sans, sans-serif" font-size="10" font-weight="500" fill="#94A3B8">Automated Micro-Lending &bull; NCR Registered Provider</text>
+
+    <!-- Selected Loan Summary in Header -->
+    <rect x="910" y="18" width="230" height="40" rx="10" fill="#05101A" stroke="#D97706" stroke-width="1"/>
+    <text x="925" y="36" font-family="Plus Jakarta Sans, sans-serif" font-size="11" fill="#94A3B8">Loan Selected:</text>
+    <text x="1010" y="36" font-family="JetBrains Mono, monospace" font-size="14" font-weight="bold" fill="#D97706">R 2,500</text>
+    <text x="1075" y="36" font-family="Plus Jakarta Sans, sans-serif" font-size="11" fill="#94A3B8">(1 Month)</text>
+  </g>
+
+  <!-- Step Progress Bar (Step 2 Active) -->
+  <g transform="translate(60, 136)">
+    <rect width="1160" height="48" rx="12" fill="#0A2540" stroke="#1E3A5F" stroke-width="1"/>
+    
+    <!-- Step 1 (Completed) -->
+    <circle cx="40" cy="24" r="12" fill="#10B981" fill-opacity="0.2" stroke="#10B981" stroke-width="1.5"/>
+    <text x="40" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="bold" fill="#10B981" text-anchor="middle">&check;</text>
+    <text x="60" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="600" fill="#10B981">1. Amount: R2,500</text>
+
+    <line x1="240" y1="24" x2="310" y2="24" stroke="#10B981" stroke-width="2"/>
+
+    <!-- Step 2 (Active) -->
+    <circle cx="340" cy="24" r="12" fill="#D97706"/>
+    <text x="340" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="bold" fill="#0A2540" text-anchor="middle">2</text>
+    <text x="360" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="700" fill="#D97706">2. Identity &amp; Income Verification</text>
+
+    <line x1="570" y1="24" x2="640" y2="24" stroke="#1E3A5F" stroke-width="2"/>
+
+    <!-- Step 3 -->
+    <circle cx="670" cy="24" r="12" fill="#1E293B" stroke="#334155" stroke-width="1"/>
+    <text x="670" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="bold" fill="#94A3B8" text-anchor="middle">3</text>
+    <text x="690" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="500" fill="#94A3B8">3. Bank Verification</text>
+
+    <line x1="840" y1="24" x2="910" y2="24" stroke="#1E3A5F" stroke-width="2"/>
+
+    <!-- Step 4 -->
+    <circle cx="940" cy="24" r="12" fill="#1E293B" stroke="#334155" stroke-width="1"/>
+    <text x="940" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="bold" fill="#94A3B8" text-anchor="middle">4</text>
+    <text x="960" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="500" fill="#94A3B8">4. DebiCheck &amp; Payout</text>
+  </g>
+
+  <!-- Step 2 Form Card -->
+  <g transform="translate(240, 220)">
+    <rect width="800" height="600" rx="20" fill="#0A2540" stroke="#1E3A5F" stroke-width="1.5" filter="url(#shadow)"/>
+
+    <g transform="translate(50, 45)">
+      <text x="0" y="20" font-family="DM Serif Display, Georgia, serif" font-size="28" font-weight="bold" fill="#FFFFFF">Who is applying for this loan?</text>
+      <text x="0" y="48" font-family="Plus Jakarta Sans, sans-serif" font-size="13" fill="#94A3B8">We verify your SA ID number against the National Population Register in real time.</text>
+
+      <!-- Input 1: 13-Digit SA ID -->
+      <g transform="translate(0, 80)">
+        <text x="0" y="14" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF">SOUTH AFRICAN 13-DIGIT ID NUMBER *</text>
+        <rect x="0" y="24" width="700" height="52" rx="12" fill="#05101A" stroke="#10B981" stroke-width="1.5"/>
+        <text x="20" y="56" font-family="JetBrains Mono, monospace" font-size="16" font-weight="bold" fill="#FFFFFF">950812 5028 087</text>
+        <!-- Validated Checkmark -->
+        <rect x="650" y="36" width="28" height="28" rx="14" fill="#10B981" fill-opacity="0.2"/>
+        <text x="664" y="55" font-family="Plus Jakarta Sans, sans-serif" font-size="14" font-weight="bold" fill="#10B981" text-anchor="middle">&check;</text>
+        <text x="0" y="92" font-family="Plus Jakarta Sans, sans-serif" font-size="11" fill="#10B981">&check; Validated: South African Citizen &bull; Age 31 &bull; Passed Underwriting Age Filter</text>
+      </g>
+
+      <!-- Input 2 & 3: First Names & Surname -->
+      <g transform="translate(0, 200)">
+        <g transform="translate(0, 0)">
+          <text x="0" y="14" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF">FIRST NAMES *</text>
+          <rect x="0" y="24" width="335" height="48" rx="12" fill="#05101A" stroke="#1E3A5F" stroke-width="1"/>
+          <text x="18" y="54" font-family="Plus Jakarta Sans, sans-serif" font-size="14" fill="#FFFFFF">Sindiwe Nomvula</text>
+        </g>
+        <g transform="translate(365, 0)">
+          <text x="0" y="14" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF">SURNAME *</text>
+          <rect x="0" y="24" width="335" height="48" rx="12" fill="#05101A" stroke="#1E3A5F" stroke-width="1"/>
+          <text x="18" y="54" font-family="Plus Jakarta Sans, sans-serif" font-size="14" fill="#FFFFFF">Dlamini</text>
+        </g>
+      </g>
+
+      <!-- Input 4 & 5: Mobile & Monthly Salary -->
+      <g transform="translate(0, 295)">
+        <g transform="translate(0, 0)">
+          <text x="0" y="14" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF">MOBILE NUMBER (FOR INSTANT OTP) *</text>
+          <rect x="0" y="24" width="335" height="48" rx="12" fill="#05101A" stroke="#1E3A5F" stroke-width="1"/>
+          <text x="18" y="54" font-family="JetBrains Mono, monospace" font-size="14" fill="#FFFFFF">079 910 9392</text>
+        </g>
+        <g transform="translate(365, 0)">
+          <text x="0" y="14" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF">NET MONTHLY SALARY (AFTER TAX) *</text>
+          <rect x="0" y="24" width="335" height="48" rx="12" fill="#05101A" stroke="#1E3A5F" stroke-width="1"/>
+          <text x="18" y="54" font-family="JetBrains Mono, monospace" font-size="14" font-weight="bold" fill="#D97706">R 9,500.00</text>
+          <text x="0" y="86" font-family="Plus Jakarta Sans, sans-serif" font-size="10" fill="#94A3B8">Passes minimum requirement of R4,500/month</text>
+        </g>
+      </g>
+
+      <!-- Employment Type Selector -->
+      <g transform="translate(0, 405)">
+        <text x="0" y="14" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF">EMPLOYMENT STATUS *</text>
+        <rect x="0" y="24" width="700" height="48" rx="12" fill="#05101A" stroke="#1E3A5F" stroke-width="1"/>
+        <text x="18" y="54" font-family="Plus Jakarta Sans, sans-serif" font-size="14" fill="#FFFFFF">Permanently Employed (Payslip &amp; Bank Salary)</text>
+      </g>
+
+      <!-- Buttons -->
+      <g transform="translate(0, 495)">
+        <rect width="180" height="48" rx="12" fill="#05101A" stroke="#1E3A5F" stroke-width="1"/>
+        <text x="90" y="30" font-family="Plus Jakarta Sans, sans-serif" font-size="13" font-weight="bold" fill="#94A3B8" text-anchor="middle">&larr; Back to Amount</text>
+
+        <rect x="420" y="0" width="280" height="48" rx="12" fill="url(#goldGrad)" filter="url(#shadow)"/>
+        <text x="560" y="30" font-family="Plus Jakarta Sans, sans-serif" font-size="13" font-weight="800" fill="#0A2540" text-anchor="middle">PROCEED TO BANK CHECK &rarr;</text>
+      </g>
+    </g>
+  </g>
+</svg>
