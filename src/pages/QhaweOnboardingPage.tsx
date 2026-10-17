@@ -158,14 +158,24 @@ export const QhaweOnboardingPage: React.FC = () => {
     }
   }, []);
 
-  // Save to local storage on change
+  // Save to local storage on change with quota safeguard
   const updateField = (key: string, value: any) => {
     setForm((prev) => {
       const updated = { ...prev, [key]: value };
       try {
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
         setLastSavedTime('Saved to browser');
-      } catch (e) {}
+      } catch (e) {
+        // If localStorage quota is exceeded (e.g. large file upload), save draft without the heavy dataUrl
+        try {
+          const draftSafe = {
+            ...updated,
+            logo_file: updated.logo_file ? { ...updated.logo_file, dataUrl: '' } : null,
+          };
+          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(draftSafe));
+          setLastSavedTime('Saved to browser');
+        } catch (inner) {}
+      }
       return updated;
     });
   };
@@ -181,26 +191,88 @@ export const QhaweOnboardingPage: React.FC = () => {
     updateField('accepted_employment', list);
   };
 
-  // Direct Logo File Upload handler
+  // Direct Logo File Upload handler with canvas optimization
   const handleLogoFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 10 * 1024 * 1024) {
-      alert('Logo file size is too large (max 10MB). Please choose a smaller file or paste a cloud link.');
+    if (file.size > 15 * 1024 * 1024) {
+      alert('Logo file size is too large (max 15MB). Please choose a smaller file or paste a cloud link.');
       return;
     }
 
     const reader = new FileReader();
     reader.onload = () => {
-      const dataUrl = reader.result as string;
-      updateField('logo_file', {
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        dataUrl,
-      });
-      updateField('logo_status', `Uploaded file: ${file.name}`);
+      const rawDataUrl = reader.result as string;
+
+      // If it's a bitmap image (JPEG/PNG/WEBP), optimize via canvas for snappy storage & upload
+      if (file.type.startsWith('image/') && !file.type.includes('svg')) {
+        const img = new Image();
+        img.onload = () => {
+          try {
+            const maxDim = 1200;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > maxDim || height > maxDim) {
+              if (width > height) {
+                height = Math.round((height * maxDim) / width);
+                width = maxDim;
+              } else {
+                width = Math.round((width * maxDim) / height);
+                height = maxDim;
+              }
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+              ctx.drawImage(img, 0, 0, width, height);
+              const outputMime = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+              const optimizedDataUrl = canvas.toDataURL(outputMime, 0.88);
+              updateField('logo_file', {
+                name: file.name,
+                size: Math.round(optimizedDataUrl.length * 0.75),
+                type: outputMime,
+                dataUrl: optimizedDataUrl,
+              });
+              updateField('logo_status', `Uploaded file: ${file.name}`);
+              return;
+            }
+          } catch (canvasErr) {
+            console.warn('Canvas optimization fallback to raw:', canvasErr);
+          }
+
+          updateField('logo_file', {
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            dataUrl: rawDataUrl,
+          });
+          updateField('logo_status', `Uploaded file: ${file.name}`);
+        };
+        img.onerror = () => {
+          updateField('logo_file', {
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            dataUrl: rawDataUrl,
+          });
+          updateField('logo_status', `Uploaded file: ${file.name}`);
+        };
+        img.src = rawDataUrl;
+      } else {
+        // SVG or other documents stored as raw
+        updateField('logo_file', {
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          dataUrl: rawDataUrl,
+        });
+        updateField('logo_status', `Uploaded file: ${file.name}`);
+      }
     };
     reader.readAsDataURL(file);
   };
@@ -225,17 +297,29 @@ export const QhaweOnboardingPage: React.FC = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           client_slug: 'qhawe',
-          organization: form.organization,
-          contact_name: form.contact_name || 'Qhawe Representative',
-          email: form.email,
-          phone: form.phone,
+          organization: form.organization.trim(),
+          contact_name: (form.contact_name || 'Qhawe Representative').trim(),
+          email: form.email.trim(),
+          phone: form.phone.trim(),
           data: form,
         }),
       });
 
-      const data = await res.json();
+      // Safely parse JSON or handle plain text/HTML error pages without throwing SyntaxError
+      let data: any = {};
+      const contentType = res.headers.get('content-type') || '';
+      if (contentType.includes('application/json')) {
+        data = await res.json();
+      } else {
+        const text = await res.text();
+        if (res.status === 413) {
+          throw new Error('The uploaded logo file is too large for the server. Please try a smaller file or provide a cloud link.');
+        }
+        throw new Error(text || `Server returned error (${res.status})`);
+      }
+
       if (!res.ok || !data.success) {
-        throw new Error(data.error || 'Failed to submit onboarding form');
+        throw new Error(data.error || 'Failed to submit onboarding form. Please verify the fields.');
       }
 
       const activeRef = data.referenceNumber || submittedRef;
