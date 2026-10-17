@@ -21,6 +21,8 @@ import {
   FileText,
   Check,
   Layers,
+  Copy,
+  Code,
 } from 'lucide-react';
 import { apiRequest } from '../../api/client';
 
@@ -106,7 +108,8 @@ export const OnboardingSubmissionsPage: React.FC = () => {
   const [submissions, setSubmissions] = useState<OnboardingSubmission[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedSub, setSelectedSub] = useState<OnboardingSubmission | null>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'brand' | 'loans' | 'underwriting' | 'operations'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'brand' | 'loans' | 'underwriting' | 'operations' | 'json'>('overview');
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const fetchSubmissions = async () => {
     setLoading(true);
@@ -171,6 +174,92 @@ export const OnboardingSubmissionsPage: React.FC = () => {
     document.body.removeChild(a);
   };
 
+  const generateBuildJson = (sub: OnboardingSubmission) => {
+    const d = sub.data || {};
+    return {
+      meta: {
+        engine: "S&S Tech Group AI Build Engine",
+        referenceNumber: sub.reference_number,
+        revision: sub.revision_count || 1,
+        status: sub.status,
+        timestamp: new Date().toISOString(),
+        flowReference: "LendPlus SA 15-Minute Automated Flow",
+        confirmedInitialLaunchCap: "R5,000"
+      },
+      client: {
+        entityName: sub.organization || "Qhawe Credit Solutions",
+        website: d.website || "https://qhawecreditsolutions.co.za",
+        contactPerson: sub.contact_name,
+        contactRole: d.contact_role || "Director / Operations Manager",
+        email: sub.email,
+        phone: sub.phone || d.phone,
+        officeAddress: d.office_address || "Suite 4, 120 Florida Road, Morningside, Durban, 4001",
+        cipcNumber: d.cipc_number || "2026/000000/07",
+        ncrRegistrationStatus: d.ncr_status || "Application in progress (to replace placeholder NCRCP00000)"
+      },
+      branding: {
+        primaryColor: d.primary_color || "#0A2540",
+        accentColor: d.accent_color || "#D97706",
+        neutralBg: d.neutral_bg || "#F8FAFC",
+        headingFont: d.heading_font || "DM Serif Display",
+        bodyFont: d.body_font || "Plus Jakarta Sans",
+        appIconSymbol: d.app_icon_symbol || "Use 'Q' Shield / Crest motif",
+        toneOfVoice: d.tone_of_voice || "Warm, community-first, transparent & encouraging ('Credit that helps you move forward')",
+        languages: d.languages || "English (with optional isiZulu language toggle)",
+        hasLogoFile: !!d.logo_file,
+        logoFileName: d.logo_file?.name || null,
+        logoCloudLink: d.logo_download_link || null,
+        logoStatus: d.logo_status || "Vector SVG available"
+      },
+      loanProducts: {
+        maxLoanAmount: 5000,
+        minLoanAmount: Number(d.short_term_min) || 500,
+        firstTimeBorrowerCap: Number(d.short_term_first_time_cap) || 2500,
+        termOptions: "1 to 3 months (30 to 90 days)",
+        interestRateMonthly: "5% per month on first loan, 3% on repeat (NCA statutory standard)",
+        monthlyAdminFee: 69.00,
+        initiationFeeFormula: "R165 + 10% on amount above R1,000, capped at R1,050 + VAT",
+        creditLifeInsurance: d.credit_life_insurance || "Optional / Integrated via registered insurance partner",
+        insurancePartner: d.insurance_partner_name || ""
+      },
+      underwritingRules: {
+        minAge: Number(d.min_age) || 18,
+        citizenshipRequirement: d.citizenship_requirement || "Valid South African 13-digit green book or smart ID card",
+        minNetMonthlySalary: Number(d.min_net_salary) || 4500,
+        minEmploymentMonths: Number(d.min_employment_months) || 3,
+        acceptedEmployment: d.accepted_employment || [
+          "Permanently employed (salary payslip)",
+          "Fixed-term contract workers",
+          "Self-employed / registered business owners"
+        ],
+        autoDeclineFilters: {
+          debtReview: d.auto_decline_debt_review ?? true,
+          administrationOrder: d.auto_decline_admin_order ?? true,
+          sequestration: d.auto_decline_sequestration ?? true,
+          adverseJudgments: d.auto_decline_judgments ?? true
+        }
+      },
+      operationsAndIntegrations: {
+        targetSubdomain: d.desired_subdomain || "apply.qhawecreditsolutions.co.za",
+        operatingModel: "Hybrid (100% automated instant approval for loans <= R5,000; instant DebiCheck mandate & real-time payout)",
+        smsSenderId: d.sms_sender_id || "QhaweCredit",
+        whatsappBotEnabled: d.whatsapp_bot_enabled ?? true,
+        whatsappNumber: d.whatsapp_number || "079 910 9392",
+        adminTeamEmails: d.admin_team_emails || "info@qhawecreditsolutions.co.za",
+        notificationAlerts: "SMS OTP + Email PDF agreement + WhatsApp instant summary to operations",
+        specialRequirements: d.special_requirements || ""
+      }
+    };
+  };
+
+  const copySpecsAsJson = (sub: OnboardingSubmission) => {
+    const jsonStr = JSON.stringify(generateBuildJson(sub), null, 2);
+    navigator.clipboard.writeText(jsonStr).then(() => {
+      setCopiedId(sub.reference_number);
+      setTimeout(() => setCopiedId(null), 3000);
+    });
+  };
+
   const getStatusBadge = (s: string) => {
     switch (s) {
       case 'Submitted':
@@ -203,7 +292,7 @@ export const OnboardingSubmissionsPage: React.FC = () => {
             Platform Onboarding Specifications
           </h1>
           <p className="text-xs sm:text-sm text-brand-warm-grey mt-1">
-            Review client parameters, brand guidelines, uploaded logos, and underwriting limits submitted by clients.
+            Review client parameters, brand guidelines, uploaded logos, and export JSON requirements for AI build.
           </p>
         </div>
 
@@ -250,6 +339,7 @@ export const OnboardingSubmissionsPage: React.FC = () => {
                 submissions.map((sub) => {
                   const hasLogoFile = !!sub.data?.logo_file;
                   const isRevised = (sub.revision_count || 1) > 1 || sub.status === 'Updated';
+                  const isCopied = copiedId === sub.reference_number;
                   return (
                     <tr
                       key={sub.id}
@@ -345,6 +435,16 @@ export const OnboardingSubmissionsPage: React.FC = () => {
                         <div className="flex items-center justify-end space-x-1.5">
                           <button
                             type="button"
+                            onClick={() => copySpecsAsJson(sub)}
+                            className="p-1.5 rounded-lg bg-brand-black border border-brand-border text-brand-gold hover:text-white hover:border-brand-gold flex items-center gap-1 px-2.5 transition"
+                            title="Copy Specs as JSON for AI build"
+                          >
+                            {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                            <span className="text-[11px] font-semibold">{isCopied ? 'Copied!' : 'Copy JSON'}</span>
+                          </button>
+
+                          <button
+                            type="button"
                             onClick={() => {
                               setSelectedSub(sub);
                               setActiveTab('overview');
@@ -403,7 +503,23 @@ export const OnboardingSubmissionsPage: React.FC = () => {
                 </p>
               </div>
 
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => copySpecsAsJson(selectedSub)}
+                  className="px-3 py-1.5 rounded-lg bg-brand-gold hover:bg-brand-gold-light text-brand-black text-xs font-bold flex items-center gap-1.5 shadow transition"
+                >
+                  {copiedId === selectedSub.reference_number ? (
+                    <>
+                      <Check className="w-3.5 h-3.5" /> Copied JSON!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3.5 h-3.5" /> Copy Specs as JSON
+                    </>
+                  )}
+                </button>
+
                 <select
                   value={selectedSub.status}
                   onChange={(e) => updateStatus(selectedSub.reference_number, e.target.value)}
@@ -431,9 +547,10 @@ export const OnboardingSubmissionsPage: React.FC = () => {
               {[
                 { id: 'overview', label: 'Overview & Entity', icon: Building2 },
                 { id: 'brand', label: 'Brand & Logo Assets', icon: Palette },
-                { id: 'loans', label: 'Loan Products & Fees', icon: CreditCard },
+                { id: 'loans', label: 'Loan Products (Max R5K)', icon: CreditCard },
                 { id: 'underwriting', label: 'Underwriting Rules', icon: ShieldCheck },
                 { id: 'operations', label: 'UX & Subdomain', icon: Globe },
+                { id: 'json', label: 'Export JSON', icon: Code },
               ].map((tab) => {
                 const Icon = tab.icon;
                 const isActive = activeTab === tab.id;
@@ -601,39 +718,44 @@ export const OnboardingSubmissionsPage: React.FC = () => {
                 </div>
               )}
 
-              {/* TAB 3: LOANS & FEES */}
+              {/* TAB 3: LOANS & FEES (CAPPED AT 5K FOR PHASE 1) */}
               {activeTab === 'loans' && (
                 <div className="space-y-4">
+                  <div className="p-3.5 rounded-xl bg-emerald-950/20 border border-emerald-500/30 text-emerald-300 flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span>Confirmed Phase 1 Cap: <strong>Loans up to R5,000 max</strong> with LendPlus-style 1 to 3 month terms.</span>
+                  </div>
+
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="p-4 rounded-xl bg-brand-black border border-brand-border space-y-2">
-                      <span className="font-bold text-brand-gold text-xs block uppercase tracking-wider">Short-Term Loan Tier</span>
+                      <span className="font-bold text-brand-gold text-xs block uppercase tracking-wider">Phase 1 Loan Limits</span>
                       <div className="flex justify-between border-b border-gray-800 pb-1.5">
-                        <span className="text-gray-400">Allowed Range:</span>
-                        <span className="text-white font-mono font-bold">R{selectedSub.data?.short_term_min} – R{selectedSub.data?.short_term_max}</span>
+                        <span className="text-gray-400">Launch Range:</span>
+                        <span className="text-white font-mono font-bold">R500 – R5,000</span>
                       </div>
                       <div className="flex justify-between border-b border-gray-800 pb-1.5">
                         <span className="text-gray-400">1st Time Borrower Cap:</span>
-                        <span className="text-white font-mono font-bold">R{selectedSub.data?.short_term_first_time_cap}</span>
+                        <span className="text-white font-mono font-bold">R2,500</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-400">Repayment Term:</span>
-                        <span className="text-white">{selectedSub.data?.short_term_terms || '1 to 6 months'}</span>
+                        <span className="text-gray-400">Repayment Terms:</span>
+                        <span className="text-white">1 to 3 months (30 to 90 days)</span>
                       </div>
                     </div>
 
                     <div className="p-4 rounded-xl bg-brand-black border border-brand-border space-y-2">
-                      <span className="font-bold text-brand-gold text-xs block uppercase tracking-wider">Personal Loan Tier</span>
+                      <span className="font-bold text-brand-gold text-xs block uppercase tracking-wider">Future Expansion Tiers</span>
                       <div className="flex justify-between border-b border-gray-800 pb-1.5">
-                        <span className="text-gray-400">Allowed Range:</span>
-                        <span className="text-white font-mono font-bold">R{selectedSub.data?.personal_min} – R{selectedSub.data?.personal_max}</span>
+                        <span className="text-gray-400">Personal Loans:</span>
+                        <span className="text-zinc-400 font-mono">Up to R150,000 (Phase 2)</span>
                       </div>
                       <div className="flex justify-between border-b border-gray-800 pb-1.5">
-                        <span className="text-gray-400">1st Time Borrower Cap:</span>
-                        <span className="text-white font-mono font-bold">R{selectedSub.data?.personal_first_time_cap}</span>
+                        <span className="text-gray-400">Debt Consolidation:</span>
+                        <span className="text-zinc-400 font-mono">Up to R150,000 (Phase 2)</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-400">Repayment Term:</span>
-                        <span className="text-white">{selectedSub.data?.personal_terms || '12 to 60 months'}</span>
+                        <span className="text-gray-400">Business Funding:</span>
+                        <span className="text-zinc-400 font-mono">Up to R250,000 (Phase 3)</span>
                       </div>
                     </div>
                   </div>
@@ -643,15 +765,15 @@ export const OnboardingSubmissionsPage: React.FC = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-2">
                       <div className="p-2.5 rounded-lg bg-gray-900 border border-gray-800">
                         <span className="text-gray-400 text-[10px] block">Monthly Admin Fee</span>
-                        <span className="text-white font-bold font-mono">{selectedSub.data?.monthly_service_fee || 'R69.00'}</span>
+                        <span className="text-white font-bold font-mono">R69.00 / month</span>
                       </div>
                       <div className="p-2.5 rounded-lg bg-gray-900 border border-gray-800">
                         <span className="text-gray-400 text-[10px] block">Initiation Fee</span>
                         <span className="text-white font-bold font-mono">Standard NCA Formula</span>
                       </div>
                       <div className="p-2.5 rounded-lg bg-gray-900 border border-gray-800">
-                        <span className="text-gray-400 text-[10px] block">Credit Life Insurance</span>
-                        <span className="text-white font-bold">{selectedSub.data?.credit_life_insurance || 'Optional'}</span>
+                        <span className="text-gray-400 text-[10px] block">Monthly Interest</span>
+                        <span className="text-white font-bold font-mono">5% per month</span>
                       </div>
                     </div>
                   </div>
@@ -725,6 +847,37 @@ export const OnboardingSubmissionsPage: React.FC = () => {
                   </div>
                 </div>
               )}
+
+              {/* TAB 6: EXPORT JSON SPECIFICATION */}
+              {activeTab === 'json' && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between bg-zinc-900 p-3 rounded-xl border border-zinc-800">
+                    <div>
+                      <span className="font-bold text-white text-xs block">Standard Build JSON Payload</span>
+                      <span className="text-[11px] text-zinc-400">Copy this directly to paste into your AI build prompt or backend service config.</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => copySpecsAsJson(selectedSub)}
+                      className="px-3.5 py-1.5 rounded-lg bg-brand-gold hover:bg-brand-gold-light text-brand-black text-xs font-bold flex items-center gap-1.5 shadow transition shrink-0"
+                    >
+                      {copiedId === selectedSub.reference_number ? (
+                        <>
+                          <Check className="w-3.5 h-3.5" /> Copied JSON!
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3.5 h-3.5" /> Copy Specs as JSON
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  <pre className="p-4 rounded-xl bg-black border border-zinc-800 text-[11px] font-mono text-emerald-400 overflow-x-auto max-h-[350px] leading-relaxed">
+                    {JSON.stringify(generateBuildJson(selectedSub), null, 2)}
+                  </pre>
+                </div>
+              )}
             </div>
 
             {/* Modal Bottom Actions */}
@@ -734,6 +887,14 @@ export const OnboardingSubmissionsPage: React.FC = () => {
               </div>
 
               <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => copySpecsAsJson(selectedSub)}
+                  className="px-3.5 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white font-semibold text-xs flex items-center gap-1.5 border border-zinc-700 transition"
+                >
+                  <Copy className="w-3.5 h-3.5 text-brand-gold" /> Copy JSON
+                </button>
+
                 {selectedSub.status !== 'Converted' && (
                   <button
                     type="button"
