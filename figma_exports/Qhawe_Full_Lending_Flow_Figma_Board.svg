@@ -1,61 +1,623 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 5400 980" width="5400" height="980">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 5440 1060" width="5440" height="1060">
   <defs>
-    <linearGradient id="boardBg" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="boardBgD" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#020810"/>
       <stop offset="100%" stop-color="#061524"/>
     </linearGradient>
-    <filter id="shadowBig" x="-5%" y="-5%" width="110%" height="115%">
+    <filter id="cardShadowD" x="-5%" y="-5%" width="110%" height="115%">
       <feDropShadow dx="0" dy="16" stdDeviation="24" flood-color="#000000" flood-opacity="0.6"/>
     </filter>
   </defs>
 
-  <rect width="5400" height="980" fill="url(#boardBg)"/>
+  <rect width="5440" height="1060" fill="url(#boardBgD)"/>
 
-  <!-- Master Title -->
+  <!-- Master Flow Header -->
   <g transform="translate(60, 40)">
-    <text x="0" y="30" font-family="DM Serif Display, Georgia, serif" font-size="34" font-weight="bold" fill="#D97706">Qhawe Credit Solutions — 15-Minute Micro-Lending Flow Architecture</text>
-    <text x="0" y="55" font-family="Plus Jakarta Sans, sans-serif" font-size="14" fill="#94A3B8">Reference Model: LendPlus South Africa &bull; Brand Identity: Qhawe Navy (#0A2540) &amp; Gold (#D97706) &bull; Phase 1 Cap: R5,000</text>
+    <text x="0" y="28" font-family="DM Serif Display, Georgia, serif" font-size="34" font-weight="bold" fill="#D97706">Qhawe Credit Solutions — Desktop &amp; Web Platform Flow (LendPlus Reference)</text>
+    <text x="0" y="55" font-family="Plus Jakarta Sans, sans-serif" font-size="14" fill="#94A3B8">Phase 1 Cap: R5,000 &bull; NCA Compliant &bull; Stitch Open Banking &bull; Automated TransUnion &bull; DebiCheck RTC Payout</text>
   </g>
 
-  <!-- Screen 1 Embed -->
-  <g transform="translate(60, 80)" filter="url(#shadowBig)">
-    <text x="0" y="-12" font-family="Plus Jakarta Sans, sans-serif" font-size="14" font-weight="bold" fill="#D97706">SCREEN 1: HERO &amp; DYNAMIC LOAN CALCULATOR (SLIDER UP TO R5K)</text>
-    <image href="Screen_1_Hero_Loan_Slider.svg" width="1240" height="852"/>
+  <!-- SCREEN 1 -->
+  <g id="Desktop_Screen_1_Calculator" transform="translate(60, 110)" filter="url(#cardShadowD)">
+    <text x="0" y="-12" font-family="Plus Jakarta Sans, sans-serif" font-size="15" font-weight="800" fill="#D97706" letter-spacing="1">1. DYNAMIC LOAN CALCULATOR &amp; COST BREAKDOWN (CAPPED AT R5,000)</text>
+    <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#05121F"/>
+      <stop offset="100%" stop-color="#0A2540"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#D97706"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="1280" height="880" fill="url(#bgGrad)"/>
+
+  <!-- Top Navigation Header -->
+  <g transform="translate(60, 40)">
+    <!-- Header Card -->
+    <rect width="1160" height="76" rx="16" fill="#0A2540" stroke="#1E3A5F" stroke-width="1.5" filter="url(#shadow)"/>
+    
+    <!-- Logo Symbol -->
+    <rect x="20" y="16" width="44" height="44" rx="10" fill="url(#goldGrad)"/>
+    <text x="42" y="47" font-family="DM Serif Display, Georgia, serif" font-size="26" font-weight="bold" fill="#0A2540" text-anchor="middle">Q</text>
+    
+    <!-- Logo Text -->
+    <text x="76" y="38" font-family="Plus Jakarta Sans, sans-serif" font-size="18" font-weight="800" fill="#FFFFFF" letter-spacing="1">QHAWE</text>
+    <text x="156" y="38" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="700" fill="#D97706" letter-spacing="2">CREDIT SOLUTIONS</text>
+    <text x="76" y="54" font-family="Plus Jakarta Sans, sans-serif" font-size="10" font-weight="500" fill="#94A3B8">Automated Micro-Lending &bull; NCR Registered Provider</text>
+
+    <!-- Right Header Badges -->
+    <rect x="910" y="22" width="230" height="32" rx="8" fill="#05101A" stroke="#10B981" stroke-width="1"/>
+    <circle cx="928" cy="38" r="4" fill="#10B981"/>
+    <text x="940" y="42" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="600" fill="#10B981">15-Min Instant Payouts Active</text>
   </g>
 
-  <!-- Flow Connector 1 -> 2 -->
-  <g transform="translate(1315, 480)">
-    <line x1="0" y1="0" x2="65" y2="0" stroke="#D97706" stroke-width="4" stroke-dasharray="6 4"/>
-    <polygon points="65,-8 80,0 65,8" fill="#D97706"/>
+  <!-- Progress Flow Bar -->
+  <g transform="translate(60, 136)">
+    <rect width="1160" height="48" rx="12" fill="#0A2540" stroke="#1E3A5F" stroke-width="1"/>
+    
+    <!-- Step 1 (Active) -->
+    <circle cx="40" cy="24" r="12" fill="#D97706"/>
+    <text x="40" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="bold" fill="#0A2540" text-anchor="middle">1</text>
+    <text x="60" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="700" fill="#D97706">1. Choose Loan Amount</text>
+
+    <line x1="240" y1="24" x2="310" y2="24" stroke="#1E3A5F" stroke-width="2"/>
+
+    <!-- Step 2 -->
+    <circle cx="340" cy="24" r="12" fill="#1E293B" stroke="#334155" stroke-width="1"/>
+    <text x="340" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="bold" fill="#94A3B8" text-anchor="middle">2</text>
+    <text x="360" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="500" fill="#94A3B8">2. Identity &amp; Income</text>
+
+    <line x1="520" y1="24" x2="590" y2="24" stroke="#1E3A5F" stroke-width="2"/>
+
+    <!-- Step 3 -->
+    <circle cx="620" cy="24" r="12" fill="#1E293B" stroke="#334155" stroke-width="1"/>
+    <text x="620" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="bold" fill="#94A3B8" text-anchor="middle">3</text>
+    <text x="640" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="500" fill="#94A3B8">3. Bank Verification</text>
+
+    <line x1="790" y1="24" x2="860" y2="24" stroke="#1E3A5F" stroke-width="2"/>
+
+    <!-- Step 4 -->
+    <circle cx="890" cy="24" r="12" fill="#1E293B" stroke="#334155" stroke-width="1"/>
+    <text x="890" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="bold" fill="#94A3B8" text-anchor="middle">4</text>
+    <text x="910" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="500" fill="#94A3B8">4. DebiCheck &amp; Payout</text>
   </g>
 
-  <!-- Screen 2 Embed -->
-  <g transform="translate(1410, 80)" filter="url(#shadowBig)">
-    <text x="0" y="-12" font-family="Plus Jakarta Sans, sans-serif" font-size="14" font-weight="bold" fill="#D97706">SCREEN 2: 13-DIGIT SA ID &amp; INCOME PRE-SCREENING</text>
-    <image href="Screen_2_Identity_KYC.svg" width="1240" height="852"/>
+  <!-- Title & Subtitle -->
+  <text x="640" y="225" font-family="DM Serif Display, Georgia, serif" font-size="34" font-weight="bold" fill="#FFFFFF" text-anchor="middle">How much cash do you need today?</text>
+  <text x="640" y="252" font-family="Plus Jakarta Sans, sans-serif" font-size="14" fill="#94A3B8" text-anchor="middle">Automated 15-minute approvals capped at R5,000 for instant disbursement.</text>
+
+  <!-- Main Calculator Grid -->
+  <g transform="translate(60, 275)">
+    <!-- Left Column: Slider Card -->
+    <rect width="680" height="520" rx="20" fill="#0A2540" stroke="#1E3A5F" stroke-width="1.5" filter="url(#shadow)"/>
+
+    <g transform="translate(40, 40)">
+      <text x="0" y="16" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="700" fill="#94A3B8" letter-spacing="1">BORROW AMOUNT</text>
+      
+      <!-- Big Amount Display -->
+      <text x="600" y="25" font-family="JetBrains Mono, monospace" font-size="44" font-weight="bold" fill="#D97706" text-anchor="end">R 2,500</text>
+
+      <!-- Slider Track -->
+      <rect x="0" y="70" width="600" height="12" rx="6" fill="#1E293B"/>
+      <!-- Active fill track up to 2500 (approx 44%) -->
+      <rect x="0" y="70" width="267" height="12" rx="6" fill="url(#goldGrad)"/>
+      <!-- Slider Thumb -->
+      <circle cx="267" cy="76" r="16" fill="#FFFFFF" stroke="#D97706" stroke-width="4" filter="url(#shadow)"/>
+
+      <!-- Min / Cap / Max Markers -->
+      <text x="0" y="112" font-family="JetBrains Mono, monospace" font-size="12" fill="#64748B">R 500 (Min)</text>
+      <text x="267" y="112" font-family="JetBrains Mono, monospace" font-size="12" font-weight="bold" fill="#D97706" text-anchor="middle">R 2,500 (1st-Time Cap)</text>
+      <text x="600" y="112" font-family="JetBrains Mono, monospace" font-size="12" fill="#64748B" text-anchor="end">R 5,000 (Max Limit)</text>
+
+      <!-- Repayment Term Section -->
+      <text x="0" y="165" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="700" fill="#94A3B8" letter-spacing="1">REPAYMENT TERM</text>
+
+      <!-- 3 Term Buttons -->
+      <!-- 1 Month (Selected) -->
+      <g transform="translate(0, 185)">
+        <rect width="186" height="64" rx="14" fill="#0F2F50" stroke="#D97706" stroke-width="2"/>
+        <text x="93" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="14" font-weight="bold" fill="#D97706" text-anchor="middle">1 Month</text>
+        <text x="93" y="48" font-family="Plus Jakarta Sans, sans-serif" font-size="11" fill="#94A3B8" text-anchor="middle">30 Days</text>
+      </g>
+
+      <!-- 2 Months -->
+      <g transform="translate(206, 185)">
+        <rect width="186" height="64" rx="14" fill="#05101A" stroke="#1E3A5F" stroke-width="1"/>
+        <text x="93" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="14" font-weight="600" fill="#FFFFFF" text-anchor="middle">2 Months</text>
+        <text x="93" y="48" font-family="Plus Jakarta Sans, sans-serif" font-size="11" fill="#64748B" text-anchor="middle">60 Days</text>
+      </g>
+
+      <!-- 3 Months -->
+      <g transform="translate(414, 185)">
+        <rect width="186" height="64" rx="14" fill="#05101A" stroke="#1E3A5F" stroke-width="1"/>
+        <text x="93" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="14" font-weight="600" fill="#FFFFFF" text-anchor="middle">3 Months</text>
+        <text x="93" y="48" font-family="Plus Jakarta Sans, sans-serif" font-size="11" fill="#64748B" text-anchor="middle">90 Days</text>
+      </g>
+
+      <!-- Features Box -->
+      <g transform="translate(0, 290)">
+        <rect width="600" height="135" rx="14" fill="#05101A" stroke="#1E3A5F" stroke-width="1"/>
+        
+        <g transform="translate(30, 30)">
+          <text x="0" y="16" font-family="Plus Jakarta Sans, sans-serif" font-size="13" font-weight="600" fill="#FFFFFF">
+            <tspan fill="#10B981" font-weight="bold">&check;  </tspan>100% Online Paperless Application
+          </text>
+          <text x="0" y="52" font-family="Plus Jakarta Sans, sans-serif" font-size="13" font-weight="600" fill="#FFFFFF">
+            <tspan fill="#10B981" font-weight="bold">&check;  </tspan>Direct RTC Payout into your Bank Account
+          </text>
+          <text x="320" y="16" font-family="Plus Jakarta Sans, sans-serif" font-size="13" font-weight="600" fill="#FFFFFF">
+            <tspan fill="#10B981" font-weight="bold">&check;  </tspan>NCA Statutory Fee Caps Guaranteed
+          </text>
+          <text x="320" y="52" font-family="Plus Jakarta Sans, sans-serif" font-size="13" font-weight="600" fill="#FFFFFF">
+            <tspan fill="#10B981" font-weight="bold">&check;  </tspan>DebiCheck Secure Mandate Protection
+          </text>
+        </g>
+      </g>
+    </g>
+
+    <!-- Right Column: LendPlus Cost Breakdown Card -->
+    <g transform="translate(710, 0)">
+      <rect width="450" height="520" rx="20" fill="#05121F" stroke="#D97706" stroke-width="1.5" filter="url(#shadow)"/>
+
+      <g transform="translate(35, 35)">
+        <text x="0" y="16" font-family="Plus Jakarta Sans, sans-serif" font-size="13" font-weight="800" fill="#FFFFFF" letter-spacing="1">COST BREAKDOWN</text>
+        <rect x="270" y="0" width="110" height="24" rx="6" fill="#10B981" fill-opacity="0.15" stroke="#10B981" stroke-width="1"/>
+        <text x="325" y="16" font-family="Plus Jakarta Sans, sans-serif" font-size="10" font-weight="bold" fill="#10B981" text-anchor="middle">NCA COMPLIANT</text>
+
+        <line x1="0" y1="36" x2="380" y2="36" stroke="#1E3A5F" stroke-width="1"/>
+
+        <!-- Breakdown Items -->
+        <g transform="translate(0, 56)">
+          <text x="0" y="15" font-family="Plus Jakarta Sans, sans-serif" font-size="13" fill="#94A3B8">Principal Borrowed:</text>
+          <text x="380" y="15" font-family="JetBrains Mono, monospace" font-size="14" font-weight="bold" fill="#FFFFFF" text-anchor="end">R 2,500.00</text>
+
+          <text x="0" y="45" font-family="Plus Jakarta Sans, sans-serif" font-size="13" fill="#94A3B8">Initiation Fee (statutory):</text>
+          <text x="380" y="45" font-family="JetBrains Mono, monospace" font-size="14" font-weight="bold" fill="#FFFFFF" text-anchor="end">R 315.00</text>
+
+          <text x="0" y="75" font-family="Plus Jakarta Sans, sans-serif" font-size="13" fill="#94A3B8">Monthly Service Fee:</text>
+          <text x="380" y="75" font-family="JetBrains Mono, monospace" font-size="14" font-weight="bold" fill="#FFFFFF" text-anchor="end">R 69.00</text>
+
+          <text x="0" y="105" font-family="Plus Jakarta Sans, sans-serif" font-size="13" fill="#94A3B8">Monthly Interest (5% NCA):</text>
+          <text x="380" y="105" font-family="JetBrains Mono, monospace" font-size="14" font-weight="bold" fill="#FFFFFF" text-anchor="end">R 125.00</text>
+
+          <text x="0" y="135" font-family="Plus Jakarta Sans, sans-serif" font-size="13" fill="#94A3B8">Credit Life Insurance:</text>
+          <text x="380" y="135" font-family="JetBrains Mono, monospace" font-size="14" font-weight="bold" fill="#FFFFFF" text-anchor="end">R 28.50</text>
+        </g>
+
+        <!-- Total Box -->
+        <g transform="translate(0, 220)">
+          <rect width="380" height="88" rx="12" fill="#0A2540" stroke="#1E3A5F" stroke-width="1"/>
+          <text x="20" y="32" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="bold" fill="#94A3B8" letter-spacing="1">TOTAL REPAYABLE</text>
+          <text x="20" y="68" font-family="JetBrains Mono, monospace" font-size="32" font-weight="bold" fill="#D97706">R 3,037.50</text>
+
+          <text x="360" y="32" font-family="Plus Jakarta Sans, sans-serif" font-size="11" fill="#94A3B8" text-anchor="end">Due Date</text>
+          <text x="360" y="55" font-family="Plus Jakarta Sans, sans-serif" font-size="13" font-weight="bold" fill="#FFFFFF" text-anchor="end">25 Nov 2026</text>
+        </g>
+
+        <!-- CTA Button -->
+        <g transform="translate(0, 340)">
+          <rect width="380" height="58" rx="14" fill="url(#goldGrad)" filter="url(#shadow)"/>
+          <text x="190" y="35" font-family="Plus Jakarta Sans, sans-serif" font-size="15" font-weight="800" fill="#0A2540" text-anchor="middle">APPLY FOR R 2,500 IN 5 MINS &rarr;</text>
+        </g>
+
+        <!-- Footer trust -->
+        <text x="190" y="425" font-family="Plus Jakarta Sans, sans-serif" font-size="11" fill="#64748B" text-anchor="middle">No upfront fees &bull; Instant RSA ID Check &bull; POPIA Compliant</text>
+      </g>
+    </g>
+  </g>
   </g>
 
-  <!-- Flow Connector 2 -> 3 -->
-  <g transform="translate(2665, 480)">
-    <line x1="0" y1="0" x2="65" y2="0" stroke="#D97706" stroke-width="4" stroke-dasharray="6 4"/>
-    <polygon points="65,-8 80,0 65,8" fill="#D97706"/>
+  <!-- SCREEN 2 -->
+  <g id="Desktop_Screen_2_Identity" transform="translate(1400, 110)" filter="url(#cardShadowD)">
+    <text x="0" y="-12" font-family="Plus Jakarta Sans, sans-serif" font-size="15" font-weight="800" fill="#D97706" letter-spacing="1">2. SOUTH AFRICAN 13-DIGIT ID &amp; SALARY PRE-SCREENING</text>
+    <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#05121F"/>
+      <stop offset="100%" stop-color="#0A2540"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#D97706"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <rect width="1280" height="880" fill="url(#bgGrad)"/>
+
+  <!-- Top Nav Header -->
+  <g transform="translate(60, 40)">
+    <rect width="1160" height="76" rx="16" fill="#0A2540" stroke="#1E3A5F" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="20" y="16" width="44" height="44" rx="10" fill="url(#goldGrad)"/>
+    <text x="42" y="47" font-family="DM Serif Display, Georgia, serif" font-size="26" font-weight="bold" fill="#0A2540" text-anchor="middle">Q</text>
+    <text x="76" y="38" font-family="Plus Jakarta Sans, sans-serif" font-size="18" font-weight="800" fill="#FFFFFF" letter-spacing="1">QHAWE</text>
+    <text x="156" y="38" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="700" fill="#D97706" letter-spacing="2">CREDIT SOLUTIONS</text>
+    <text x="76" y="54" font-family="Plus Jakarta Sans, sans-serif" font-size="10" font-weight="500" fill="#94A3B8">Automated Micro-Lending &bull; NCR Registered Provider</text>
+
+    <!-- Selected Loan Summary in Header -->
+    <rect x="910" y="18" width="230" height="40" rx="10" fill="#05101A" stroke="#D97706" stroke-width="1"/>
+    <text x="925" y="36" font-family="Plus Jakarta Sans, sans-serif" font-size="11" fill="#94A3B8">Loan Selected:</text>
+    <text x="1010" y="36" font-family="JetBrains Mono, monospace" font-size="14" font-weight="bold" fill="#D97706">R 2,500</text>
+    <text x="1075" y="36" font-family="Plus Jakarta Sans, sans-serif" font-size="11" fill="#94A3B8">(1 Month)</text>
   </g>
 
-  <!-- Screen 3 Embed -->
-  <g transform="translate(2760, 80)" filter="url(#shadowBig)">
-    <text x="0" y="-12" font-family="Plus Jakarta Sans, sans-serif" font-size="14" font-weight="bold" fill="#D97706">SCREEN 3: OPEN BANKING &amp; BUREAU AFFORDABILITY (STITCH/TRUID)</text>
-    <image href="Screen_3_Bank_Verification.svg" width="1240" height="852"/>
+  <!-- Step Progress Bar (Step 2 Active) -->
+  <g transform="translate(60, 136)">
+    <rect width="1160" height="48" rx="12" fill="#0A2540" stroke="#1E3A5F" stroke-width="1"/>
+    
+    <!-- Step 1 (Completed) -->
+    <circle cx="40" cy="24" r="12" fill="#10B981" fill-opacity="0.2" stroke="#10B981" stroke-width="1.5"/>
+    <text x="40" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="bold" fill="#10B981" text-anchor="middle">&check;</text>
+    <text x="60" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="600" fill="#10B981">1. Amount: R2,500</text>
+
+    <line x1="240" y1="24" x2="310" y2="24" stroke="#10B981" stroke-width="2"/>
+
+    <!-- Step 2 (Active) -->
+    <circle cx="340" cy="24" r="12" fill="#D97706"/>
+    <text x="340" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="bold" fill="#0A2540" text-anchor="middle">2</text>
+    <text x="360" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="700" fill="#D97706">2. Identity &amp; Income Verification</text>
+
+    <line x1="570" y1="24" x2="640" y2="24" stroke="#1E3A5F" stroke-width="2"/>
+
+    <!-- Step 3 -->
+    <circle cx="670" cy="24" r="12" fill="#1E293B" stroke="#334155" stroke-width="1"/>
+    <text x="670" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="bold" fill="#94A3B8" text-anchor="middle">3</text>
+    <text x="690" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="500" fill="#94A3B8">3. Bank Verification</text>
+
+    <line x1="840" y1="24" x2="910" y2="24" stroke="#1E3A5F" stroke-width="2"/>
+
+    <!-- Step 4 -->
+    <circle cx="940" cy="24" r="12" fill="#1E293B" stroke="#334155" stroke-width="1"/>
+    <text x="940" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="bold" fill="#94A3B8" text-anchor="middle">4</text>
+    <text x="960" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="500" fill="#94A3B8">4. DebiCheck &amp; Payout</text>
   </g>
 
-  <!-- Flow Connector 3 -> 4 -->
-  <g transform="translate(4015, 480)">
-    <line x1="0" y1="0" x2="65" y2="0" stroke="#D97706" stroke-width="4" stroke-dasharray="6 4"/>
-    <polygon points="65,-8 80,0 65,8" fill="#D97706"/>
+  <!-- Step 2 Form Card -->
+  <g transform="translate(240, 220)">
+    <rect width="800" height="600" rx="20" fill="#0A2540" stroke="#1E3A5F" stroke-width="1.5" filter="url(#shadow)"/>
+
+    <g transform="translate(50, 45)">
+      <text x="0" y="20" font-family="DM Serif Display, Georgia, serif" font-size="28" font-weight="bold" fill="#FFFFFF">Who is applying for this loan?</text>
+      <text x="0" y="48" font-family="Plus Jakarta Sans, sans-serif" font-size="13" fill="#94A3B8">We verify your SA ID number against the National Population Register in real time.</text>
+
+      <!-- Input 1: 13-Digit SA ID -->
+      <g transform="translate(0, 80)">
+        <text x="0" y="14" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF">SOUTH AFRICAN 13-DIGIT ID NUMBER *</text>
+        <rect x="0" y="24" width="700" height="52" rx="12" fill="#05101A" stroke="#10B981" stroke-width="1.5"/>
+        <text x="20" y="56" font-family="JetBrains Mono, monospace" font-size="16" font-weight="bold" fill="#FFFFFF">950812 5028 087</text>
+        <!-- Validated Checkmark -->
+        <rect x="650" y="36" width="28" height="28" rx="14" fill="#10B981" fill-opacity="0.2"/>
+        <text x="664" y="55" font-family="Plus Jakarta Sans, sans-serif" font-size="14" font-weight="bold" fill="#10B981" text-anchor="middle">&check;</text>
+        <text x="0" y="92" font-family="Plus Jakarta Sans, sans-serif" font-size="11" fill="#10B981">&check; Validated: South African Citizen &bull; Age 31 &bull; Passed Underwriting Age Filter</text>
+      </g>
+
+      <!-- Input 2 & 3: First Names & Surname -->
+      <g transform="translate(0, 200)">
+        <g transform="translate(0, 0)">
+          <text x="0" y="14" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF">FIRST NAMES *</text>
+          <rect x="0" y="24" width="335" height="48" rx="12" fill="#05101A" stroke="#1E3A5F" stroke-width="1"/>
+          <text x="18" y="54" font-family="Plus Jakarta Sans, sans-serif" font-size="14" fill="#FFFFFF">Sindiwe Nomvula</text>
+        </g>
+        <g transform="translate(365, 0)">
+          <text x="0" y="14" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF">SURNAME *</text>
+          <rect x="0" y="24" width="335" height="48" rx="12" fill="#05101A" stroke="#1E3A5F" stroke-width="1"/>
+          <text x="18" y="54" font-family="Plus Jakarta Sans, sans-serif" font-size="14" fill="#FFFFFF">Dlamini</text>
+        </g>
+      </g>
+
+      <!-- Input 4 & 5: Mobile & Monthly Salary -->
+      <g transform="translate(0, 295)">
+        <g transform="translate(0, 0)">
+          <text x="0" y="14" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF">MOBILE NUMBER (FOR INSTANT OTP) *</text>
+          <rect x="0" y="24" width="335" height="48" rx="12" fill="#05101A" stroke="#1E3A5F" stroke-width="1"/>
+          <text x="18" y="54" font-family="JetBrains Mono, monospace" font-size="14" fill="#FFFFFF">079 910 9392</text>
+        </g>
+        <g transform="translate(365, 0)">
+          <text x="0" y="14" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF">NET MONTHLY SALARY (AFTER TAX) *</text>
+          <rect x="0" y="24" width="335" height="48" rx="12" fill="#05101A" stroke="#1E3A5F" stroke-width="1"/>
+          <text x="18" y="54" font-family="JetBrains Mono, monospace" font-size="14" font-weight="bold" fill="#D97706">R 9,500.00</text>
+          <text x="0" y="86" font-family="Plus Jakarta Sans, sans-serif" font-size="10" fill="#94A3B8">Passes minimum requirement of R4,500/month</text>
+        </g>
+      </g>
+
+      <!-- Employment Type Selector -->
+      <g transform="translate(0, 405)">
+        <text x="0" y="14" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF">EMPLOYMENT STATUS *</text>
+        <rect x="0" y="24" width="700" height="48" rx="12" fill="#05101A" stroke="#1E3A5F" stroke-width="1"/>
+        <text x="18" y="54" font-family="Plus Jakarta Sans, sans-serif" font-size="14" fill="#FFFFFF">Permanently Employed (Payslip &amp; Bank Salary)</text>
+      </g>
+
+      <!-- Buttons -->
+      <g transform="translate(0, 495)">
+        <rect width="180" height="48" rx="12" fill="#05101A" stroke="#1E3A5F" stroke-width="1"/>
+        <text x="90" y="30" font-family="Plus Jakarta Sans, sans-serif" font-size="13" font-weight="bold" fill="#94A3B8" text-anchor="middle">&larr; Back to Amount</text>
+
+        <rect x="420" y="0" width="280" height="48" rx="12" fill="url(#goldGrad)" filter="url(#shadow)"/>
+        <text x="560" y="30" font-family="Plus Jakarta Sans, sans-serif" font-size="13" font-weight="800" fill="#0A2540" text-anchor="middle">PROCEED TO BANK CHECK &rarr;</text>
+      </g>
+    </g>
+  </g>
   </g>
 
-  <!-- Screen 4 Embed -->
-  <g transform="translate(4110, 80)" filter="url(#shadowBig)">
-    <text x="0" y="-12" font-family="Plus Jakarta Sans, sans-serif" font-size="14" font-weight="bold" fill="#10B981">SCREEN 4: APPROVAL DECISION, DEBICHECK MANDATE &amp; RTC PAYOUT</text>
-    <image href="Screen_4_DebiCheck_RTC_Payout.svg" width="1240" height="852"/>
+  <!-- SCREEN 3 -->
+  <g id="Desktop_Screen_3_Banking" transform="translate(2740, 110)" filter="url(#cardShadowD)">
+    <text x="0" y="-12" font-family="Plus Jakarta Sans, sans-serif" font-size="15" font-weight="800" fill="#D97706" letter-spacing="1">3. OPEN BANKING STATEMENT &amp; BUREAU VERIFICATION</text>
+    <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#05121F"/>
+      <stop offset="100%" stop-color="#0A2540"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#D97706"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <rect width="1280" height="880" fill="url(#bgGrad)"/>
+
+  <!-- Top Nav Header -->
+  <g transform="translate(60, 40)">
+    <rect width="1160" height="76" rx="16" fill="#0A2540" stroke="#1E3A5F" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="20" y="16" width="44" height="44" rx="10" fill="url(#goldGrad)"/>
+    <text x="42" y="47" font-family="DM Serif Display, Georgia, serif" font-size="26" font-weight="bold" fill="#0A2540" text-anchor="middle">Q</text>
+    <text x="76" y="38" font-family="Plus Jakarta Sans, sans-serif" font-size="18" font-weight="800" fill="#FFFFFF" letter-spacing="1">QHAWE</text>
+    <text x="156" y="38" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="700" fill="#D97706" letter-spacing="2">CREDIT SOLUTIONS</text>
+    <text x="76" y="54" font-family="Plus Jakarta Sans, sans-serif" font-size="10" font-weight="500" fill="#94A3B8">Automated Micro-Lending &bull; NCR Registered Provider</text>
+
+    <rect x="910" y="18" width="230" height="40" rx="10" fill="#05101A" stroke="#D97706" stroke-width="1"/>
+    <text x="925" y="36" font-family="Plus Jakarta Sans, sans-serif" font-size="11" fill="#94A3B8">Applicant:</text>
+    <text x="980" y="36" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="bold" fill="#FFFFFF">Sindiwe Dlamini</text>
+    <text x="1080" y="36" font-family="JetBrains Mono, monospace" font-size="12" font-weight="bold" fill="#D97706">R2,500</text>
+  </g>
+
+  <!-- Step Progress Bar (Step 3 Active) -->
+  <g transform="translate(60, 136)">
+    <rect width="1160" height="48" rx="12" fill="#0A2540" stroke="#1E3A5F" stroke-width="1"/>
+    
+    <circle cx="40" cy="24" r="12" fill="#10B981" fill-opacity="0.2" stroke="#10B981" stroke-width="1.5"/>
+    <text x="40" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="bold" fill="#10B981" text-anchor="middle">&check;</text>
+    <text x="60" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="600" fill="#10B981">1. Amount: R2,500</text>
+
+    <line x1="240" y1="24" x2="310" y2="24" stroke="#10B981" stroke-width="2"/>
+
+    <circle cx="340" cy="24" r="12" fill="#10B981" fill-opacity="0.2" stroke="#10B981" stroke-width="1.5"/>
+    <text x="340" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="bold" fill="#10B981" text-anchor="middle">&check;</text>
+    <text x="360" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="600" fill="#10B981">2. ID Verified</text>
+
+    <line x1="490" y1="24" x2="560" y2="24" stroke="#10B981" stroke-width="2"/>
+
+    <!-- Step 3 Active -->
+    <circle cx="590" cy="24" r="12" fill="#D97706"/>
+    <text x="590" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="bold" fill="#0A2540" text-anchor="middle">3</text>
+    <text x="610" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="700" fill="#D97706">3. Instant Bank Verification</text>
+
+    <line x1="810" y1="24" x2="880" y2="24" stroke="#1E3A5F" stroke-width="2"/>
+
+    <circle cx="910" cy="24" r="12" fill="#1E293B" stroke="#334155" stroke-width="1"/>
+    <text x="910" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="bold" fill="#94A3B8" text-anchor="middle">4</text>
+    <text x="930" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="500" fill="#94A3B8">4. DebiCheck &amp; Payout</text>
+  </g>
+
+  <!-- Step 3 Form Card -->
+  <g transform="translate(240, 220)">
+    <rect width="800" height="600" rx="20" fill="#0A2540" stroke="#1E3A5F" stroke-width="1.5" filter="url(#shadow)"/>
+
+    <g transform="translate(50, 45)">
+      <text x="0" y="20" font-family="DM Serif Display, Georgia, serif" font-size="28" font-weight="bold" fill="#FFFFFF">Select your bank for instant payout</text>
+      <text x="0" y="48" font-family="Plus Jakarta Sans, sans-serif" font-size="13" fill="#94A3B8">LendPlus Open Banking flow: No manual PDF uploads needed. Automated 90-day salary verification.</text>
+
+      <!-- Bank Grid (6 Major SA Banks) -->
+      <g transform="translate(0, 80)">
+        <!-- Capitec (Selected) -->
+        <g transform="translate(0, 0)">
+          <rect width="220" height="88" rx="14" fill="#0F2F50" stroke="#D97706" stroke-width="2"/>
+          <circle cx="35" cy="44" r="18" fill="#D97706" fill-opacity="0.2"/>
+          <text x="35" y="49" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="bold" fill="#D97706" text-anchor="middle">C</text>
+          <text x="65" y="40" font-family="Plus Jakarta Sans, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">Capitec Bank</text>
+          <text x="65" y="58" font-family="Plus Jakarta Sans, sans-serif" font-size="10" font-weight="600" fill="#10B981">&check; Instant RTC Ready</text>
+        </g>
+
+        <!-- Standard Bank -->
+        <g transform="translate(240, 0)">
+          <rect width="220" height="88" rx="14" fill="#05101A" stroke="#1E3A5F" stroke-width="1"/>
+          <circle cx="35" cy="44" r="18" fill="#1E3A5F"/>
+          <text x="35" y="49" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="bold" fill="#FFFFFF" text-anchor="middle">S</text>
+          <text x="65" y="40" font-family="Plus Jakarta Sans, sans-serif" font-size="14" font-weight="600" fill="#FFFFFF">Standard Bank</text>
+          <text x="65" y="58" font-family="Plus Jakarta Sans, sans-serif" font-size="10" fill="#94A3B8">Salary account</text>
+        </g>
+
+        <!-- FNB -->
+        <g transform="translate(480, 0)">
+          <rect width="220" height="88" rx="14" fill="#05101A" stroke="#1E3A5F" stroke-width="1"/>
+          <circle cx="35" cy="44" r="18" fill="#1E3A5F"/>
+          <text x="35" y="49" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="bold" fill="#FFFFFF" text-anchor="middle">F</text>
+          <text x="65" y="40" font-family="Plus Jakarta Sans, sans-serif" font-size="14" font-weight="600" fill="#FFFFFF">FNB</text>
+          <text x="65" y="58" font-family="Plus Jakarta Sans, sans-serif" font-size="10" fill="#94A3B8">Salary account</text>
+        </g>
+
+        <!-- Nedbank -->
+        <g transform="translate(0, 105)">
+          <rect width="220" height="88" rx="14" fill="#05101A" stroke="#1E3A5F" stroke-width="1"/>
+          <circle cx="35" cy="44" r="18" fill="#1E3A5F"/>
+          <text x="35" y="49" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="bold" fill="#FFFFFF" text-anchor="middle">N</text>
+          <text x="65" y="40" font-family="Plus Jakarta Sans, sans-serif" font-size="14" font-weight="600" fill="#FFFFFF">Nedbank</text>
+          <text x="65" y="58" font-family="Plus Jakarta Sans, sans-serif" font-size="10" fill="#94A3B8">Salary account</text>
+        </g>
+
+        <!-- Absa -->
+        <g transform="translate(240, 105)">
+          <rect width="220" height="88" rx="14" fill="#05101A" stroke="#1E3A5F" stroke-width="1"/>
+          <circle cx="35" cy="44" r="18" fill="#1E3A5F"/>
+          <text x="35" y="49" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="bold" fill="#FFFFFF" text-anchor="middle">A</text>
+          <text x="65" y="40" font-family="Plus Jakarta Sans, sans-serif" font-size="14" font-weight="600" fill="#FFFFFF">Absa Bank</text>
+          <text x="65" y="58" font-family="Plus Jakarta Sans, sans-serif" font-size="10" fill="#94A3B8">Salary account</text>
+        </g>
+
+        <!-- TymeBank -->
+        <g transform="translate(480, 105)">
+          <rect width="220" height="88" rx="14" fill="#05101A" stroke="#1E3A5F" stroke-width="1"/>
+          <circle cx="35" cy="44" r="18" fill="#1E3A5F"/>
+          <text x="35" y="49" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="bold" fill="#FFFFFF" text-anchor="middle">T</text>
+          <text x="65" y="40" font-family="Plus Jakarta Sans, sans-serif" font-size="14" font-weight="600" fill="#FFFFFF">TymeBank</text>
+          <text x="65" y="58" font-family="Plus Jakarta Sans, sans-serif" font-size="10" fill="#94A3B8">Salary account</text>
+        </g>
+      </g>
+
+      <!-- Automated Underwriting & Bureau Verification Progress -->
+      <g transform="translate(0, 310)">
+        <rect width="700" height="130" rx="14" fill="#05101A" stroke="#D97706" stroke-width="1"/>
+        <text x="30" y="35" font-family="Plus Jakarta Sans, sans-serif" font-size="13" font-weight="bold" fill="#FFFFFF">Automated Underwriting Engine</text>
+        <text x="30" y="56" font-family="Plus Jakarta Sans, sans-serif" font-size="11" fill="#94A3B8">Real-time check with TransUnion &bull; Affordability calculated per NCA statutory guidelines</text>
+
+        <!-- Status check badges -->
+        <g transform="translate(30, 80)">
+          <rect width="140" height="30" rx="8" fill="#10B981" fill-opacity="0.15" stroke="#10B981" stroke-width="1"/>
+          <text x="70" y="20" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="bold" fill="#10B981" text-anchor="middle">&check; No Debt Review</text>
+
+          <rect x="155" y="0" width="140" height="30" rx="8" fill="#10B981" fill-opacity="0.15" stroke="#10B981" stroke-width="1"/>
+          <text x="225" y="20" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="bold" fill="#10B981" text-anchor="middle">&check; No Judgments</text>
+
+          <rect x="310" y="0" width="150" height="30" rx="8" fill="#10B981" fill-opacity="0.15" stroke="#10B981" stroke-width="1"/>
+          <text x="385" y="20" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="bold" fill="#10B981" text-anchor="middle">&check; Salary Verified</text>
+
+          <rect x="475" y="0" width="165" height="30" rx="8" fill="#D97706" fill-opacity="0.15" stroke="#D97706" stroke-width="1"/>
+          <text x="557" y="20" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="bold" fill="#D97706" text-anchor="middle">&bull; DebiCheck Ready</text>
+        </g>
+      </g>
+
+      <!-- Buttons -->
+      <g transform="translate(0, 480)">
+        <rect width="180" height="48" rx="12" fill="#05101A" stroke="#1E3A5F" stroke-width="1"/>
+        <text x="90" y="30" font-family="Plus Jakarta Sans, sans-serif" font-size="13" font-weight="bold" fill="#94A3B8" text-anchor="middle">&larr; Back to Identity</text>
+
+        <rect x="400" y="0" width="300" height="48" rx="12" fill="url(#goldGrad)" filter="url(#shadow)"/>
+        <text x="550" y="30" font-family="Plus Jakarta Sans, sans-serif" font-size="13" font-weight="800" fill="#0A2540" text-anchor="middle">AUTHENTICATE &amp; GET DECISION &rarr;</text>
+      </g>
+    </g>
+  </g>
+  </g>
+
+  <!-- SCREEN 4 -->
+  <g id="Desktop_Screen_4_Payout" transform="translate(4080, 110)" filter="url(#cardShadowD)">
+    <text x="0" y="-12" font-family="Plus Jakarta Sans, sans-serif" font-size="15" font-weight="800" fill="#10B981" letter-spacing="1">4. INSTANT PRE-APPROVAL, DEBICHECK MANDATE &amp; RTC PAYOUT</text>
+    <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#05121F"/>
+      <stop offset="100%" stop-color="#0A2540"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#D97706"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+    <linearGradient id="emeraldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#059669"/>
+      <stop offset="100%" stop-color="#10B981"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <rect width="1280" height="880" fill="url(#bgGrad)"/>
+
+  <!-- Top Nav Header -->
+  <g transform="translate(60, 40)">
+    <rect width="1160" height="76" rx="16" fill="#0A2540" stroke="#1E3A5F" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="20" y="16" width="44" height="44" rx="10" fill="url(#goldGrad)"/>
+    <text x="42" y="47" font-family="DM Serif Display, Georgia, serif" font-size="26" font-weight="bold" fill="#0A2540" text-anchor="middle">Q</text>
+    <text x="76" y="38" font-family="Plus Jakarta Sans, sans-serif" font-size="18" font-weight="800" fill="#FFFFFF" letter-spacing="1">QHAWE</text>
+    <text x="156" y="38" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="700" fill="#D97706" letter-spacing="2">CREDIT SOLUTIONS</text>
+    <text x="76" y="54" font-family="Plus Jakarta Sans, sans-serif" font-size="10" font-weight="500" fill="#94A3B8">Automated Micro-Lending &bull; NCR Registered Provider</text>
+
+    <rect x="910" y="18" width="230" height="40" rx="10" fill="#05101A" stroke="#10B981" stroke-width="1"/>
+    <circle cx="928" cy="38" r="4" fill="#10B981"/>
+    <text x="940" y="42" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="bold" fill="#10B981">Loan Approved &bull; Ready</text>
+  </g>
+
+  <!-- Step Progress Bar (All Completed) -->
+  <g transform="translate(60, 136)">
+    <rect width="1160" height="48" rx="12" fill="#0A2540" stroke="#1E3A5F" stroke-width="1"/>
+    
+    <circle cx="40" cy="24" r="12" fill="#10B981" fill-opacity="0.2" stroke="#10B981" stroke-width="1.5"/>
+    <text x="40" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="bold" fill="#10B981" text-anchor="middle">&check;</text>
+    <text x="60" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="600" fill="#10B981">1. Amount: R2,500</text>
+
+    <line x1="240" y1="24" x2="310" y2="24" stroke="#10B981" stroke-width="2"/>
+
+    <circle cx="340" cy="24" r="12" fill="#10B981" fill-opacity="0.2" stroke="#10B981" stroke-width="1.5"/>
+    <text x="340" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="bold" fill="#10B981" text-anchor="middle">&check;</text>
+    <text x="360" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="600" fill="#10B981">2. ID Verified</text>
+
+    <line x1="490" y1="24" x2="560" y2="24" stroke="#10B981" stroke-width="2"/>
+
+    <circle cx="590" cy="24" r="12" fill="#10B981" fill-opacity="0.2" stroke="#10B981" stroke-width="1.5"/>
+    <text x="590" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="bold" fill="#10B981" text-anchor="middle">&check;</text>
+    <text x="610" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="600" fill="#10B981">3. Bank Verified</text>
+
+    <line x1="750" y1="24" x2="820" y2="24" stroke="#10B981" stroke-width="2"/>
+
+    <circle cx="850" cy="24" r="12" fill="#D97706"/>
+    <text x="850" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="bold" fill="#0A2540" text-anchor="middle">4</text>
+    <text x="870" y="28" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="700" fill="#D97706">4. Sign &amp; RTC Payout</text>
+  </g>
+
+  <!-- Step 4 Approval & Payout Card -->
+  <g transform="translate(240, 220)">
+    <rect width="800" height="600" rx="20" fill="#0A2540" stroke="#10B981" stroke-width="2" filter="url(#shadow)"/>
+
+    <g transform="translate(50, 40)">
+      <!-- Success Badge -->
+      <circle cx="350" cy="40" r="32" fill="#10B981" fill-opacity="0.2" stroke="#10B981" stroke-width="2"/>
+      <text x="350" y="49" font-family="Plus Jakarta Sans, sans-serif" font-size="28" font-weight="bold" fill="#10B981" text-anchor="middle">&check;</text>
+
+      <text x="350" y="105" font-family="DM Serif Display, Georgia, serif" font-size="28" font-weight="bold" fill="#FFFFFF" text-anchor="middle">Congratulations, Sindiwe!</text>
+      <text x="350" y="130" font-family="Plus Jakarta Sans, sans-serif" font-size="13" fill="#94A3B8" text-anchor="middle">Your micro-loan of R 2,500 has been approved and is ready for immediate payout.</text>
+
+      <!-- Contract Agreement Summary Box -->
+      <g transform="translate(50, 155)">
+        <rect width="600" height="180" rx="14" fill="#05101A" stroke="#1E3A5F" stroke-width="1"/>
+
+        <g transform="translate(30, 25)">
+          <text x="0" y="16" font-family="Plus Jakarta Sans, sans-serif" font-size="13" font-weight="bold" fill="#FFFFFF">Approved Principal:</text>
+          <text x="540" y="16" font-family="JetBrains Mono, monospace" font-size="18" font-weight="bold" fill="#D97706" text-anchor="end">R 2,500.00</text>
+
+          <text x="0" y="48" font-family="Plus Jakarta Sans, sans-serif" font-size="13" fill="#94A3B8">Disbursement Bank Account:</text>
+          <text x="540" y="48" font-family="Plus Jakarta Sans, sans-serif" font-size="13" font-weight="semibold" fill="#FFFFFF" text-anchor="end">Capitec Bank &bull;&bull;&bull;&bull; 8087</text>
+
+          <text x="0" y="80" font-family="Plus Jakarta Sans, sans-serif" font-size="13" fill="#94A3B8">Repayment Date &amp; Total:</text>
+          <text x="540" y="80" font-family="JetBrains Mono, monospace" font-size="13" font-weight="bold" fill="#FFFFFF" text-anchor="end">25 Nov 2026 (R 3,037.50)</text>
+
+          <text x="0" y="112" font-family="Plus Jakarta Sans, sans-serif" font-size="13" fill="#94A3B8">DebiCheck Mandate Status:</text>
+          <text x="540" y="112" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="bold" fill="#10B981" text-anchor="end">&check; Prompt sent to Capitec App</text>
+        </g>
+      </g>
+
+      <!-- Digital Signature Checkbox & OTP -->
+      <g transform="translate(50, 360)">
+        <rect width="600" height="70" rx="12" fill="#05101A" stroke="#1E3A5F" stroke-width="1"/>
+        <rect x="20" y="24" width="22" height="22" rx="6" fill="#10B981"/>
+        <text x="31" y="39" font-family="Plus Jakarta Sans, sans-serif" font-size="14" font-weight="bold" fill="#0A2540" text-anchor="middle">&check;</text>
+        
+        <text x="55" y="32" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="600" fill="#FFFFFF">I accept the NCA Form 20.1 pre-agreement statement and terms.</text>
+        <text x="55" y="50" font-family="Plus Jakarta Sans, sans-serif" font-size="10" fill="#94A3B8">OTP authentication code #4829 has been verified to mobile 079 910 9392.</text>
+      </g>
+
+      <!-- Big RTC Payout Button -->
+      <g transform="translate(50, 460)">
+        <rect width="600" height="56" rx="14" fill="url(#emeraldGrad)" filter="url(#shadow)"/>
+        <text x="300" y="34" font-family="Plus Jakarta Sans, sans-serif" font-size="15" font-weight="800" fill="#FFFFFF" text-anchor="middle">DISBURSE R 2,500 VIA REAL-TIME CLEARING (RTC) NOW &rarr;</text>
+      </g>
+    </g>
+  </g>
   </g>
 </svg>
