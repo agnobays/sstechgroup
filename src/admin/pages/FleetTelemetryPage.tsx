@@ -117,11 +117,11 @@ export const FleetTelemetryPage: React.FC = () => {
     };
     init();
 
-    // Auto-refresh every 20 seconds
+    // Auto-refresh every 3 seconds for instant real-time telemetry stream
     const interval = setInterval(() => {
       fetchFleet();
       if (selectedAppId) fetchAnalytics(selectedAppId);
-    }, 20000);
+    }, 3000);
 
     return () => clearInterval(interval);
   }, [selectedAppId]);
@@ -146,6 +146,10 @@ export const FleetTelemetryPage: React.FC = () => {
         </div>
 
         <div className="flex items-center space-x-3">
+          <div className="hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-emerald-950/60 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span>⚡ Instant Live Sync Active (3s)</span>
+          </div>
           <button
             onClick={handleRefresh}
             disabled={refreshing}

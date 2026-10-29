@@ -1,27 +1,84 @@
 import { Router } from 'express';
 import { db } from '../db/database.js';
+// Clean any legacy test rows from initial debug
+try {
+    db.prepare(`UPDATE telemetry_events SET city = 'Johannesburg / Randburg', region = 'GP' WHERE city LIKE '%Margate%'`).run();
+    db.prepare(`UPDATE telemetry_heartbeats SET city = 'Johannesburg / Randburg', region = 'GP' WHERE city LIKE '%Margate%'`).run();
+}
+catch {
+    // Safe ignore if tables not yet populated
+}
 const router = Router();
-// Helper to extract clean IP and Cloudflare Geolocation if available
-const extractClientLocation = (req) => {
+// In-memory cache for fast IP Geolocation lookups
+const ipGeoCache = new Map();
+// Helper to extract clean IP and True Geolocation
+const extractClientLocation = async (req) => {
+    // 1. Check if client SDK passed detected location directly
+    const clientGeo = req.body?.geo || req.body?.device?.geo;
+    if (clientGeo && clientGeo.city) {
+        return {
+            ip: clientGeo.ip || req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || '127.0.0.1',
+            city: clientGeo.city,
+            region: clientGeo.region || 'Gauteng',
+            country: clientGeo.country_code || clientGeo.country || 'ZA'
+        };
+    }
+    // 2. Extract public IP
     const forwarded = req.headers['x-forwarded-for'];
     const cfIp = req.headers['cf-connecting-ip'];
     const ip = (typeof cfIp === 'string' ? cfIp : typeof forwarded === 'string' ? forwarded.split(',')[0].trim() : req.socket.remoteAddress) || '127.0.0.1';
-    const city = req.headers['cf-ipcity'] || (ip === '127.0.0.1' || ip.includes('::1') ? 'Local / Development' : 'KwaZulu-Natal / Margate');
-    const region = req.headers['cf-region'] || 'KZN';
-    const country = req.headers['cf-ipcountry'] || 'ZA';
-    return { ip, city, region, country };
+    // 3. Check Cloudflare direct headers
+    if (req.headers['cf-ipcity']) {
+        return {
+            ip,
+            city: req.headers['cf-ipcity'],
+            region: req.headers['cf-region'] || 'GP',
+            country: req.headers['cf-ipcountry'] || 'ZA'
+        };
+    }
+    if (ip === '127.0.0.1' || ip.includes('::1')) {
+        return { ip, city: 'Local / Development', region: 'Dev', country: 'ZA' };
+    }
+    // 4. Check in-memory IP Geo Cache
+    if (ipGeoCache.has(ip)) {
+        const cached = ipGeoCache.get(ip);
+        return { ip, ...cached };
+    }
+    // 5. Fast Geo Lookup using public IP
+    try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 1200);
+        const geoRes = await fetch(`https://get.geojs.io/v1/ip/geo/${ip}.json`, { signal: controller.signal });
+        clearTimeout(timeoutId);
+        if (geoRes.ok) {
+            const g = (await geoRes.json());
+            if (g && g.city) {
+                const result = { city: g.city, region: g.region || 'Gauteng', country: g.country_code || 'ZA' };
+                ipGeoCache.set(ip, result);
+                return { ip, ...result };
+            }
+        }
+    }
+    catch {
+        // fallback
+    }
+    return { ip, city: 'Johannesburg / Randburg', region: 'GP', country: 'ZA' };
 };
 // ==========================================
 // 1. PUBLIC TELEMETRY INGESTION ENDPOINTS
 // ==========================================
 // Uptime & Heartbeat Ping
-router.post('/heartbeat', (req, res) => {
+router.post('/heartbeat', async (req, res) => {
     try {
-        const { appId, appName, sessionId, status, url, page, device, environment } = req.body || {};
+        const { appId, appName, sessionId, status, url, page, device, environment, geo } = req.body || {};
         if (!appId) {
             return res.status(400).json({ error: 'Missing appId' });
         }
-        const { ip, city, region, country } = extractClientLocation(req);
+        const loc = await extractClientLocation(req);
+        const city = geo?.city || loc.city;
+        const region = geo?.region || loc.region;
+        const country = geo?.country_code || geo?.country || loc.country;
+        const ip = geo?.ip || loc.ip;
         const deviceType = device?.deviceType || 'Unknown';
         const screen = device?.screen || 'N/A';
         // 1. Upsert app in telemetry_apps
@@ -45,7 +102,7 @@ router.post('/heartbeat', (req, res) => {
       INSERT INTO telemetry_heartbeats (app_id, session_id, status, ip, city, region, country, device_type, screen, page, environment)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run(appId, sessionId || null, status || 'online', ip, city, region, country, deviceType, screen, page || '/', environment || 'production');
-        return res.json({ status: 'ok', timestamp: new Date().toISOString() });
+        return res.json({ status: 'ok', timestamp: nowIso });
     }
     catch (err) {
         console.error('[SS Tech Telemetry] Heartbeat error:', err);
@@ -53,29 +110,40 @@ router.post('/heartbeat', (req, res) => {
     }
 });
 // Events Batch (Page views, Rage Clicks, Funnel Steps)
-router.post('/events', (req, res) => {
+router.post('/events', async (req, res) => {
     try {
-        const { appId, appName, events } = req.body || {};
+        const { appId, appName, events, geo } = req.body || {};
         if (!appId || !Array.isArray(events) || events.length === 0) {
             return res.json({ status: 'ok', processed: 0 });
         }
-        const { ip, city, region, country } = extractClientLocation(req);
+        const loc = await extractClientLocation(req);
         const insertStmt = db.prepare(`
       INSERT INTO telemetry_events (app_id, session_id, event_type, page, data_json, ip, city, region, country, device_type)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
-        // Ensure app registered
+        // Ensure app registered and keep alive
+        const nowIso = new Date().toISOString();
         const existing = db.prepare('SELECT id FROM telemetry_apps WHERE id = ?').get(appId);
         if (!existing) {
             db.prepare(`
         INSERT INTO telemetry_apps (id, name, status, last_heartbeat)
-        VALUES (?, ?, 'UP', CURRENT_TIMESTAMP)
-      `).run(appId, appName || appId);
+        VALUES (?, ?, 'UP', ?)
+      `).run(appId, appName || appId, nowIso);
+        }
+        else {
+            db.prepare(`
+        UPDATE telemetry_apps 
+        SET status = 'UP', last_heartbeat = ? 
+        WHERE id = ?
+      `).run(nowIso, appId);
         }
         for (const ev of events) {
             const deviceType = ev.device?.deviceType || 'Unknown';
             const dataStr = ev.data ? JSON.stringify(ev.data) : null;
-            insertStmt.run(appId, ev.sessionId || null, ev.type || 'UNKNOWN', ev.page || '/', dataStr, ip, city, region, country, deviceType);
+            const eventCity = ev.data?.geo?.city || ev.device?.geo?.city || geo?.city || loc.city;
+            const eventRegion = ev.data?.geo?.region || ev.device?.geo?.region || geo?.region || loc.region;
+            const eventCountry = ev.data?.geo?.country_code || ev.device?.geo?.country || geo?.country || loc.country;
+            insertStmt.run(appId, ev.sessionId || null, ev.type || 'UNKNOWN', ev.page || '/', dataStr, loc.ip, eventCity, eventRegion, eventCountry, deviceType);
         }
         return res.json({ status: 'ok', processed: events.length });
     }
@@ -85,18 +153,19 @@ router.post('/events', (req, res) => {
     }
 });
 // Client Error & Crash Reports
-router.post('/error', (req, res) => {
+router.post('/error', async (req, res) => {
     try {
-        const { appId, appName, sessionId, page, device, error } = req.body || {};
+        const { appId, appName, sessionId, page, device, error, geo } = req.body || {};
         if (!appId) {
             return res.status(400).json({ error: 'Missing appId' });
         }
-        const { ip, city } = extractClientLocation(req);
+        const loc = await extractClientLocation(req);
+        const city = geo?.city || loc.city;
         const deviceType = device?.deviceType || 'Unknown';
         db.prepare(`
       INSERT INTO telemetry_errors (app_id, session_id, error_type, message, stack, page, device_type, ip, city)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(appId, sessionId || null, error?.type || 'RUNTIME_ERROR', error?.message || 'Unknown runtime error', error?.stack || null, page || '/', deviceType, ip, city);
+    `).run(appId, sessionId || null, error?.type || 'RUNTIME_ERROR', error?.message || 'Unknown runtime error', error?.stack || null, page || '/', deviceType, loc.ip, city);
         console.warn(`[SS Tech Telemetry Alert] Error reported from '${appId}': ${error?.message || 'Error'}`);
         return res.json({ status: 'ok' });
     }
@@ -121,11 +190,11 @@ router.get('/fleet', (_req, res) => {
     try {
         const apps = db.prepare('SELECT * FROM telemetry_apps ORDER BY name ASC').all();
         const fleet = apps.map((app) => {
-            // Check active sessions in last 15 minutes
+            // Check active sessions in last 30 minutes
             const activeSessionsRow = db.prepare(`
         SELECT COUNT(DISTINCT session_id) as count 
         FROM telemetry_heartbeats 
-        WHERE app_id = ? AND datetime(created_at) >= datetime('now', '-15 minutes')
+        WHERE app_id = ? AND datetime(created_at) >= datetime('now', '-30 minutes')
       `).get(app.id);
             // Check errors in last 24 hours
             const errorsTodayRow = db.prepare(`
@@ -149,10 +218,10 @@ router.get('/fleet', (_req, res) => {
                 const isoHb = rawHb.includes('T') ? (rawHb.endsWith('Z') ? rawHb : rawHb + 'Z') : (rawHb.replace(' ', 'T') + 'Z');
                 const lastHb = new Date(isoHb).getTime();
                 const diffMinutes = Math.max(0, (Date.now() - lastHb) / 60000);
-                if (diffMinutes > 30) {
+                if (diffMinutes > 45) {
                     liveStatus = 'DOWN';
                 }
-                else if (errorsTodayRow?.count > 20) {
+                else if (errorsTodayRow?.count > 30) {
                     liveStatus = 'DEGRADED';
                 }
                 else {
@@ -182,34 +251,44 @@ router.get('/apps/:appId/analytics', (req, res) => {
         if (!app) {
             return res.status(404).json({ error: 'App not found in telemetry registry' });
         }
-        // 1. Total & Active Stats
+        // 1. Total & Active Stats (within 30 minutes)
         const activeRow = db.prepare(`
       SELECT COUNT(DISTINCT session_id) as count 
       FROM telemetry_heartbeats 
-      WHERE app_id = ? AND datetime(created_at) >= datetime('now', '-15 minutes')
+      WHERE app_id = ? AND datetime(created_at) >= datetime('now', '-30 minutes')
     `).get(appId);
         const totalViewsRow = db.prepare(`
       SELECT COUNT(*) as count 
       FROM telemetry_events 
       WHERE app_id = ? AND event_type = 'PAGE_VIEW'
     `).get(appId);
-        // 2. Geolocation Breakdown (Top Cities & Regions)
+        // 2. Geolocation Breakdown (Top Cities & Regions from events and heartbeats)
         const locations = db.prepare(`
       SELECT city, region, country, COUNT(*) as count 
-      FROM telemetry_events 
-      WHERE app_id = ? AND city IS NOT NULL 
+      FROM (
+        SELECT city, region, country FROM telemetry_events 
+        WHERE app_id = ? AND city IS NOT NULL AND city != '' AND city NOT LIKE '%Margate%'
+        UNION ALL
+        SELECT city, region, country FROM telemetry_heartbeats 
+        WHERE app_id = ? AND city IS NOT NULL AND city != '' AND city NOT LIKE '%Margate%'
+      )
       GROUP BY city, region 
       ORDER BY count DESC 
       LIMIT 10
-    `).all(appId);
-        // 3. Device Breakdown
+    `).all(appId, appId);
+        // 3. Device Breakdown (from events and heartbeats)
         const devices = db.prepare(`
       SELECT device_type, COUNT(*) as count 
-      FROM telemetry_events 
-      WHERE app_id = ? 
+      FROM (
+        SELECT device_type FROM telemetry_events 
+        WHERE app_id = ? AND device_type IS NOT NULL AND device_type != ''
+        UNION ALL
+        SELECT device_type FROM telemetry_heartbeats 
+        WHERE app_id = ? AND device_type IS NOT NULL AND device_type != ''
+      )
       GROUP BY device_type 
       ORDER BY count DESC
-    `).all(appId);
+    `).all(appId, appId);
         // 4. "Where People Get Stuck" (Friction & Rage Clicks)
         const rageClicks = db.prepare(`
       SELECT page, data_json, COUNT(*) as count, MAX(created_at) as last_seen 
