@@ -33,18 +33,19 @@ router.post('/heartbeat', (req: Request, res: Response) => {
     const screen = device?.screen || 'N/A';
 
     // 1. Upsert app in telemetry_apps
+    const nowIso = new Date().toISOString();
     const existing = db.prepare('SELECT id FROM telemetry_apps WHERE id = ?').get(appId);
     if (!existing) {
       db.prepare(`
         INSERT INTO telemetry_apps (id, name, url, status, last_heartbeat)
-        VALUES (?, ?, ?, 'UP', CURRENT_TIMESTAMP)
-      `).run(appId, appName || appId, url || null);
+        VALUES (?, ?, ?, 'UP', ?)
+      `).run(appId, appName || appId, url || null, nowIso);
     } else {
       db.prepare(`
         UPDATE telemetry_apps 
-        SET status = 'UP', last_heartbeat = CURRENT_TIMESTAMP 
+        SET status = 'UP', last_heartbeat = ? 
         WHERE id = ?
-      `).run(appId);
+      `).run(nowIso, appId);
     }
 
     // 2. Insert heartbeat
@@ -182,17 +183,21 @@ router.get('/fleet', (_req: Request, res: Response) => {
         WHERE app_id = ? AND datetime(created_at) >= datetime('now', '-24 hours')
       `).get(app.id) as any;
 
-      // Determine live status: if last heartbeat was within 10 minutes -> UP, else if recent error rate high -> DEGRADED, else DOWN
+      // Determine live status: check ISO UTC timestamp accurately
       let liveStatus = 'UP';
       if (!app.last_heartbeat) {
         liveStatus = 'PENDING';
       } else {
-        const lastHb = new Date(app.last_heartbeat).getTime();
-        const diffMinutes = (Date.now() - lastHb) / 60000;
-        if (diffMinutes > 15) {
+        const rawHb = String(app.last_heartbeat);
+        const isoHb = rawHb.includes('T') ? (rawHb.endsWith('Z') ? rawHb : rawHb + 'Z') : (rawHb.replace(' ', 'T') + 'Z');
+        const lastHb = new Date(isoHb).getTime();
+        const diffMinutes = Math.max(0, (Date.now() - lastHb) / 60000);
+        if (diffMinutes > 30) {
           liveStatus = 'DOWN';
         } else if (errorsTodayRow?.count > 20) {
           liveStatus = 'DEGRADED';
+        } else {
+          liveStatus = 'UP';
         }
       }
 
