@@ -24,6 +24,7 @@ import followUpRoutes from './routes/followUps.js';
 import teamRoutes from './routes/team.js';
 import emailAccountsRoutes from './routes/emailAccounts.js';
 import onboardingRoutes from './routes/onboarding.js';
+import telemetryRoutes from './routes/telemetry.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -72,6 +73,7 @@ app.use('/api/follow-ups', followUpRoutes);
 app.use('/api/team', teamRoutes);
 app.use('/api/email-accounts', emailAccountsRoutes);
 app.use('/api/onboarding', onboardingRoutes);
+app.use('/api/telemetry', cors({ origin: '*' }), telemetryRoutes);
 
 // Health check
 app.get('/api/health', (_req, res) => {

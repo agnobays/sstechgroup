@@ -522,6 +522,76 @@ export function initDatabase(): void {
       );
     }
   }
+
+  // Ensure telemetry tables exist for multi-app fleet monitoring
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS telemetry_apps (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      url TEXT,
+      status TEXT NOT NULL DEFAULT 'UP',
+      last_heartbeat TEXT,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS telemetry_heartbeats (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      app_id TEXT NOT NULL,
+      session_id TEXT,
+      status TEXT NOT NULL,
+      ip TEXT,
+      city TEXT,
+      region TEXT,
+      country TEXT,
+      device_type TEXT,
+      screen TEXT,
+      page TEXT,
+      environment TEXT,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS telemetry_events (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      app_id TEXT NOT NULL,
+      session_id TEXT,
+      event_type TEXT NOT NULL,
+      page TEXT,
+      data_json TEXT,
+      ip TEXT,
+      city TEXT,
+      region TEXT,
+      country TEXT,
+      device_type TEXT,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS telemetry_errors (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      app_id TEXT NOT NULL,
+      session_id TEXT,
+      error_type TEXT NOT NULL,
+      message TEXT NOT NULL,
+      stack TEXT,
+      page TEXT,
+      device_type TEXT,
+      ip TEXT,
+      city TEXT,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  // Seed Falakhe Funerals as the primary fleet app
+  try {
+    const existingFalakhe = db.prepare('SELECT id FROM telemetry_apps WHERE id = ?').get('falakhe-funerals');
+    if (!existingFalakhe) {
+      db.prepare(`
+        INSERT INTO telemetry_apps (id, name, url, status, last_heartbeat)
+        VALUES (?, ?, ?, 'UP', CURRENT_TIMESTAMP)
+      `).run('falakhe-funerals', 'Falakhe Funeral Services', 'https://falakhefunerals.co.za');
+    }
+  } catch (err) {
+    console.warn('Telemetry app seed notice:', err);
+  }
 }
 
 export default db;

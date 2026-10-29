@@ -27,3 +27,8 @@ Thumbs.db
 # CloudLinux DirectAdmin Passenger configuration (server specific)
 .htaccess
 
+# Personal / scratch scripts
+download_*.py
+downloads/
+__pycache__/
+

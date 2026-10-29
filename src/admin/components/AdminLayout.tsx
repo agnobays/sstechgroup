@@ -16,6 +16,7 @@ import {
   User,
   Mail,
   FileCheck,
+  Activity,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -31,6 +32,7 @@ export const AdminLayout: React.FC = () => {
 
   const navItems = [
     { label: 'Dashboard', path: '/admin', icon: LayoutDashboard, exact: true },
+    { label: 'Fleet Telemetry & Apps', path: '/admin/telemetry', icon: Activity },
     { label: 'Quotations', path: '/admin/quotes', icon: FileText },
     { label: 'Invoices', path: '/admin/invoices', icon: Receipt },
     { label: 'CRM Leads', path: '/admin/leads', icon: Users },

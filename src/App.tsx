@@ -33,6 +33,7 @@ import { EnquiriesPage } from './admin/pages/EnquiriesPage';
 import { OnboardingSubmissionsPage } from './admin/pages/OnboardingSubmissionsPage';
 import { TeamManagementPage } from './admin/pages/TeamManagementPage';
 import { EmailVaultPage } from './admin/pages/EmailVaultPage';
+import { FleetTelemetryPage } from './admin/pages/FleetTelemetryPage';
 import { WhatsAppButton } from './components/WhatsAppButton';
 
 // Public Layout Wrapper
@@ -224,6 +225,7 @@ export const App: React.FC = () => {
         }
       >
         <Route index element={<DashboardPage />} />
+        <Route path="telemetry" element={<FleetTelemetryPage />} />
         <Route path="quotes" element={<QuotesPage />} />
         <Route path="quotes/new" element={<QuotesPage />} />
         <Route path="invoices" element={<InvoicesPage />} />
